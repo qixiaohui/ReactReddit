@@ -54,21 +54,18 @@ class ReactReddit extends Component {
 				ref={(drawer) => { !this.state.drawer ? this.setDrawer(drawer) : null }}>
 				{drawer &&
 				<Navigator
-					initialRoute={Navigate.getInitialRoute()} />}
+					initialRoute={Navigate.getInitialRoute()} 
 					configureScene={() => {
                             return Navigator.SceneConfigs.FadeAndroid;
                         }}
 					ref={(navigator) => { !this.state.navigator ? this.setNavigator(navigator) : null }}
 					renderScene={(route) => {
-                        if (this.state.navigator && route.component) {
                             return (
                                 <View
                                     style={styles.scene}
                                     showsVerticalScrollIndicator={false}>
-                                	<route.component title={route.title} path={route.path} {...route.props} />
                                 </View>
                             );
-                        }
                     }}
 				/>
 				}
@@ -77,7 +74,7 @@ class ReactReddit extends Component {
 	}
 }
 
-AppRegistry.registerComponent('ReactNative', () => ReactNative);
+AppRegistry.registerComponent('ReactReddit', () => ReactReddit);
 
 const styles = {
 	scene: {
