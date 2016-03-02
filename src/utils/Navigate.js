@@ -37,11 +37,9 @@ export default class Navigate {
 			for (const route in routes) {
 				if (routes[route].initialRoute) {
 					initial = {path: route, ...routes[route]};
-					console.log(JSON.stringify(initial));
 					break;
 				}
 			}
-			console.log("%%%%");
 			return initial || {
 				path,
 				...routes[Object.keys(routes)[0]]

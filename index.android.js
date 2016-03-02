@@ -62,7 +62,6 @@ class ReactReddit extends Component {
                         }}
 					ref={(navigator) => { !this.state.navigator ? this.setNavigator(navigator) : null }}
 					renderScene={(route) => {
-						console.log(route+"***");
                     	if(this.state.navigator && route){
                     		return(
                                 <View

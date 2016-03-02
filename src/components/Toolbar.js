@@ -26,7 +26,7 @@ export default class Toolbar extends Component {
     render() {
         const { navigator } = this.context;
         const { onIconPress } = this.props;
-
+		
         return (
             <MaterialToolbar
                 title={navigator && navigator.currentRoute ? navigator.currentRoute.title : 'Welcome'}

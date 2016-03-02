@@ -8,6 +8,8 @@ export default class MainPage extends Component {
         super(props);
         this.state = {
 			list: null,
+			before: null,
+			endReached: false,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
@@ -15,6 +17,14 @@ export default class MainPage extends Component {
 		this.fetchPosts();
     }
 	fetchPosts = () => {
+		if(this.state.endReached){
+			return;
+		}
+		
+		if(this.state.before){
+			url.new = url.new + "?beforer=" + this.state.before;
+		}
+		
 		fetch(url.new)
 		  .then((response) => response.json())
 		  .then((responseData) => {
@@ -23,8 +33,19 @@ export default class MainPage extends Component {
 //			this.setState({
 //			  dataSource: this.state.dataSource.cloneWithRows(data),
 //			});
+			if(this.state.before === responseData.data.after){
+				return;
+			}else if(!responseData.data.after){
+				this.state.endReached = true;
+			}
+			
+			if(this.state.before){
+				responseData.data.children =
+					this.state.dataSource._dataBlob.s1.concat(responseData.data.children);
+			}
 			this.setState({
 				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
+				before: responseData.data.after,
 			});
 		  })
 		  .done();
@@ -37,6 +58,7 @@ export default class MainPage extends Component {
 					dataSource={this.state.dataSource}
 					renderRow={this.renderRow}
 					style={styles.listView}
+					onEndReached={this.fetchPosts}
 				  />
 				</View>
 			);
@@ -76,7 +98,6 @@ export default class MainPage extends Component {
 				</View>				
 			);
 		}else{
-			console.log(JSON.stringify(row));
 			return (
 				<View style={{flex: 1}}>
 					<Line></Line>
