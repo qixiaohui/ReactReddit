@@ -2,6 +2,7 @@ import React, { AppRegistry, Component, Navigator, DrawerLayoutAndroid, ScrollVi
 
 import Navigate from './src/utils/Navigate';
 import Navigation from './src/scenes/Navigation';
+import Toolbar from './src/components/Toolbar';
 
 class ReactReddit extends Component {
 
@@ -55,17 +56,23 @@ class ReactReddit extends Component {
 				{drawer &&
 				<Navigator
 					initialRoute={Navigate.getInitialRoute()} 
+					navigationBar={<Toolbar onIconPress={drawer.openDrawer} />}
 					configureScene={() => {
                             return Navigator.SceneConfigs.FadeAndroid;
                         }}
 					ref={(navigator) => { !this.state.navigator ? this.setNavigator(navigator) : null }}
 					renderScene={(route) => {
-                            return (
+						console.log(route+"***");
+                    	if(this.state.navigator && route){
+                    		return(
                                 <View
                                     style={styles.scene}
                                     showsVerticalScrollIndicator={false}>
+                                    <route.component title={route.title} path={route.path} {...route.props} />
+
                                 </View>
                             );
+                    	}
                     }}
 				/>
 				}

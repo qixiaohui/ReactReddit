@@ -9,6 +9,7 @@
     "react-native": "^0.20.0"
   },
   "devDependencies": {
+    "moment": "^2.11.2",
     "react-native-material-design": "^0.3.2"
   }
 }

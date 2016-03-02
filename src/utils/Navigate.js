@@ -2,10 +2,8 @@ import { BackAndroid } from 'react-native';
 
 let routes = null;
 
-try {
-	routes = require('../routes').default;
-} catch (e) {
-}
+routes = require('../routes').default;
+console.log(routes+"^^^");
 
 export default class Navigate {
 
@@ -20,12 +18,15 @@ export default class Navigate {
 	*/
 	static getInitialRoute = (path, customRoutes) => {
 		if (customRoutes) {
-			routes = customRoutes;
+			rou
+			tes = customRoutes;
 		}
+		console.log(routes);
 		if (!routes) {
 			console.warn(`[Navigate.getInitialRoute()] No routes found. Add routes to src/routes.js.`);
 			return null;
 		}
+		console.log("Im here");
 		if (path) {
 			return {
 				path,
@@ -36,9 +37,11 @@ export default class Navigate {
 			for (const route in routes) {
 				if (routes[route].initialRoute) {
 					initial = {path: route, ...routes[route]};
+					console.log(JSON.stringify(initial));
 					break;
 				}
 			}
+			console.log("%%%%");
 			return initial || {
 				path,
 				...routes[Object.keys(routes)[0]]
