@@ -4,6 +4,9 @@ import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
 export default class MainPage extends Component {
+    static contextTypes = {
+        navigator: React.PropTypes.object.isRequired,
+    };
 	constructor(props) {
         super(props);
         this.state = {
@@ -56,7 +59,7 @@ export default class MainPage extends Component {
 				<View style={{flex: 1}}>
 				  <ListView
 					dataSource={this.state.dataSource}
-					renderRow={this.renderRow}
+					renderRow={this.renderRow.bind(this)}
 					style={styles.listView}
 					onEndReached={this.fetchPosts}
 				  />
@@ -71,22 +74,27 @@ export default class MainPage extends Component {
 	}
     
 	renderRow = (row)=> {
+        const { navigator } = this.context;
 		if(row.data.media){
 			return(
 				<View>
 					<Line></Line>
 					<Card>
-						<Card.Media
-							image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
-							overlay
-						>
-							<Text style={[styles.imageHeader, COLOR.paperGrey50]}>
-								{row.data.media.oembed.title}
-							</Text>
-							<Text style={[TYPO.paperSubhead, COLOR.paperGrey50]}>
-								submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()} r/{row.data.subreddit}
-							</Text>
-						</Card.Media>
+                        <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
+                        <View>
+                            <Card.Media
+                                image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
+                                overlay
+                            >
+                                <Text style={[styles.imageHeader, COLOR.paperGrey50]}>
+                                    {row.data.media.oembed.title}
+                                </Text>
+                                <Text style={[TYPO.paperSubhead, COLOR.paperGrey50]}>
+                                    submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()} r/{row.data.subreddit}
+                                </Text>
+                            </Card.Media>
+                        </View>
+                        </TouchableHighlight>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
 							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
@@ -101,15 +109,17 @@ export default class MainPage extends Component {
 			return (
 				<View style={{flex: 1}}>
 					<Line></Line>
-					<TouchableHighlight>
 					  <View style={styles.container}>
 						<View style={styles.rightContainer}>
-						  <Text style={styles.title}>{row.data.title}</Text>
-						  <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()} r/{row.data.subreddit}</Text>
+                        <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
+                          <View>
+						      <Text style={styles.title}>{row.data.title}</Text>
+						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()} r/{row.data.subreddit}</Text>
+                          </View>
+                        </TouchableHighlight>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</View>
 					  </View>
-					</TouchableHighlight>
 				</View>
 			);
 		}
