@@ -3,6 +3,9 @@ import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
+import FloatingActionButton from '../components/FloatingActionButton'
+import toast from '../modules/Toast'
+    
 export default class MainPage extends Component {
     static contextTypes = {
         navigator: React.PropTypes.object.isRequired,
@@ -63,6 +66,11 @@ export default class MainPage extends Component {
 					style={styles.listView}
 					onEndReached={this.fetchPosts}
 				  />
+                <TouchableHighlight style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
+                    <View>
+                        <FloatingActionButton style = {styles.floatingButton} />
+                    </View>
+                </TouchableHighlight>
 				</View>
 			);
 		} else {
@@ -165,5 +173,14 @@ var styles = StyleSheet.create({
   listView: {
     paddingTop: 5,
     backgroundColor: '#F5FCFF',
+  },
+  fabContainer: {
+      position: 'absolute',
+      bottom: 25,
+      right: 25,     
+  },
+  floatingButton: {
+      width: 56,
+      height: 56, 
   },
 });

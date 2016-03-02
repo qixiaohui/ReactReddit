@@ -1,40 +1,64 @@
 package com.reactreddit;
 
-import com.facebook.react.ReactActivity;
-import com.facebook.react.ReactPackage;
+import android.app.Activity;
+import android.os.Bundle;
+
+import com.facebook.react.LifecycleState;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactRootView;
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
+import com.reactreddit.fbpackage.FbReactPackage;
 
-import java.util.Arrays;
-import java.util.List;
+public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
-public class MainActivity extends ReactActivity {
+    private ReactInstanceManager mReactInstanceManager;
+    private ReactRootView mReactRootView;
 
-    /**
-     * Returns the name of the main component registered from JavaScript.
-     * This is used to schedule rendering of the component.
-     */
     @Override
-    protected String getMainComponentName() {
-        return "ReactReddit";
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        mReactRootView = new ReactRootView(this);
+        mReactInstanceManager = ReactInstanceManager.builder()
+                .setApplication(getApplication())
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModuleName("index.android")
+                .addPackage(new MainReactPackage())
+                .addPackage(new FbReactPackage())
+                .setUseDeveloperSupport(BuildConfig.DEBUG)
+                .setInitialLifecycleState(LifecycleState.RESUMED)
+                .build();
+        mReactRootView.startReactApplication(mReactInstanceManager, "ReactReddit", null);
+        setContentView(mReactRootView);
     }
 
-    /**
-     * Returns whether dev mode should be enabled.
-     * This enables e.g. the dev menu.
-     */
     @Override
-    protected boolean getUseDeveloperSupport() {
-        return BuildConfig.DEBUG;
+    public void invokeDefaultOnBackPressed() {
+        super.onBackPressed();
     }
 
-   /**
-   * A list of packages used by the app. If the app uses additional views
-   * or modules besides the default ones, add more packages here.
-   */
     @Override
-    protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-        new MainReactPackage()
-      );
+    public void onBackPressed() {
+        if(mReactInstanceManager != null){
+            mReactInstanceManager.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mReactInstanceManager != null){
+            mReactInstanceManager.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mReactInstanceManager != null){
+            mReactInstanceManager.onResume(this, this);
+        }
     }
 }
