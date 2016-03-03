@@ -3,7 +3,6 @@ import { BackAndroid } from 'react-native';
 let routes = null;
 
 routes = require('../routes').default;
-console.log(routes+"^^^");
 
 export default class Navigate {
 

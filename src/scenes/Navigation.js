@@ -41,22 +41,21 @@ export default class Navigation extends Component {
                 <Drawer.Section
                     items={[{
                         icon: 'home',
-                        value: 'Welcome',
-                        active: !route || route === 'welcome',
-                        onPress: () => this.changeScene('welcome'),
-                        onLongPress: () => this.changeScene('welcome')
+                        value: 'home',
+                        active: !route || route === 'mainpage',
+                        onPress: () => this.changeScene('mainpage'),
+                        onLongPress: () => this.changeScene('mainpage')
                     }]}
                 />
 
                 <Drawer.Section
-                    title="Components"
+                    title="Activities"
                     items={[{
                         icon: 'face',
-                        value: 'Avatars',
-                        label: '12',
-                        active: route === 'avatars',
-                        onPress: () => this.changeScene('avatars'),
-                        onLongPress: () => this.changeScene('avatars')
+                        value: 'Login',
+                        active: route === 'login',
+                        onPress: () => this.changeScene('login'),
+                        onLongPress: () => this.changeScene('login')
                     }, {
                         icon: 'label',
                         value: 'Buttons',

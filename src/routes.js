@@ -9,4 +9,8 @@ export default {
             }
         },
     },
+    login: {
+        title: 'Login',
+        component: require('./scenes/Login').default,
+    },
 }
