@@ -101,10 +101,10 @@ export default class MainPage extends Component {
         const { navigator } = this.context;
 		if(row.data.media){
 			return(
+                <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
 				<View>
 					<Line></Line>
 					<Card>
-                        <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
                         <View>
                             <Card.Media
                                 image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
@@ -118,7 +118,6 @@ export default class MainPage extends Component {
                                 </Text>
                             </Card.Media>
                         </View>
-                        </TouchableHighlight>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
 							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
@@ -127,24 +126,25 @@ export default class MainPage extends Component {
 							<Button value="ACTION" />
 						</Card.Actions>
 					</Card>
-				</View>				
+				</View>		
+                </TouchableHighlight>
 			);
 		}else{
 			return (
+                <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
 				<View style={{flex: 1}}>
 					<Line></Line>
 					  <View style={styles.container}>
 						<View style={styles.rightContainer}>
-                        <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
                           <View>
 						      <Text style={styles.title}>{row.data.title}</Text>
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()} r/{row.data.subreddit}</Text>
                           </View>
-                        </TouchableHighlight>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</View>
 					  </View>
 				</View>
+                </TouchableHighlight>
 			);
 		}
 	};

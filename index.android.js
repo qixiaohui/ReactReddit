@@ -1,8 +1,9 @@
-import React, { AppRegistry, Component, Navigator, DrawerLayoutAndroid, ScrollView, View, Text } from 'react-native';
+import React, { AppRegistry, Component, Navigator, DrawerLayoutAndroid, ScrollView, View, Text, DeviceEventEmitter } from 'react-native';
 
 import Navigate from './src/utils/Navigate';
 import Navigation from './src/scenes/Navigation';
 import Toolbar from './src/components/Toolbar';
+import toast from './src/modules/Toast'
 
 class ReactReddit extends Component {
 
@@ -15,9 +16,39 @@ class ReactReddit extends Component {
 		super(props);
 		this.state = {
 			drawer: null,
-			navigator: null
+			navigator: null,
+            drawerOpen: false,
 		};
 	}
+
+    handleKey = (key) => {
+        switch(key){
+            case "0":
+                break;
+            case "1":
+                break;
+            case "2":
+                if(this.state.drawerOpen){
+                    this.state.drawer.closeDrawer();
+                    this.setState({drawerOpen: false});                   
+                }
+                break;
+            case "3":
+                break;
+            case "4":
+                if(!this.state.drawerOpen){
+                    this.state.drawer.openDrawer();
+                    this.setState({drawerOpen: true});
+                }
+                break;       
+        }
+    };
+
+    componentWillMount() {
+        DeviceEventEmitter.addListener('keyDown', function(e: Event){
+            this.handleKey(e.code);
+        }.bind(this));
+    }
 
 	getChildContext = () => {
 		return {
@@ -43,6 +74,7 @@ class ReactReddit extends Component {
 		const navView = React.createElement(Navigation);
 
 		return (
+            
 			<DrawerLayoutAndroid
 				drawerWidth={300}
 				drawerPosition={DrawerLayoutAndroid.positions.Left}
@@ -68,7 +100,6 @@ class ReactReddit extends Component {
                                     style={styles.scene}
                                     showsVerticalScrollIndicator={false}>
                                     <route.component title={route.title} path={route.path} {...route.props} />
-
                                 </View>
                             );
                     	}
