@@ -1,8 +1,45 @@
 import React, {Component, StyleSheet, ScrollView, View, Text, TextInput} from 'react-native'
 import {Checkbox, Button, COLOR, TYPO } from 'react-native-material-design';
-
+import toast from '../modules/Toast'
+import url from '../http/url'
 
 export default class Login extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            userName: null,
+            passWord: null,
+        };
+    }
+    
+    onLogin = () => {
+        this.fetchLogin().then(
+            function(data){
+                toast.showToast(JSON.stringify(data), 3000);
+            }
+        ).then(
+            function(e){
+                toast.showToast(e, 3000);
+            }
+        );
+    };
+    
+    fetchLogin = () => {
+        var obj = {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                user: this.state.userName,
+                passwd: this.state.passWord,
+                api_type: 'json',
+            })
+        }; 
+        return fetch(url.login, obj);
+    };
+    
     render()  {
         return(
 			<ScrollView>
@@ -10,13 +47,13 @@ export default class Login extends Component{
 					<View style={styles.rowContainer}>
 						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Username:</Text>
 						<View style={styles.textInput}>
-							<TextInput  />
+							<TextInput onEndEditing = {(text) => {this.setState({userName: text})}} />
 						</View>
 					</View>
 					<View style={styles.rowContainer}> 
 						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Password:</Text>
 						<View style={styles.textInput}>
-							<TextInput  />
+							<TextInput onEndEditing = {(text) => {this.setState({passWord: text})}} />
 						</View>
 					</View>
 				</View>
@@ -24,7 +61,7 @@ export default class Login extends Component{
 					<Checkbox onCheck={()=>{}} primary={'googleGreen'} value="true" label="show password" />
 				</View>
 				<View style={{marginLeft: 40, marginRight: 40}}>
-					<Button text="Login" primary={'googleGreen'} theme="dark" raised={true}/>
+					<Button text="Login" primary={'googleGreen'} onPress={this.fetchLogin} theme="dark" raised={true}/>
 				</View>
 		   </ScrollView>
         );

@@ -5,6 +5,7 @@ import Line from '../components/Line'
 import moment from 'moment'
 import FloatingActionButton from '../components/FloatingActionButton'
 import toast from '../modules/Toast'
+import storage from '../storage/storage'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -20,7 +21,20 @@ export default class MainPage extends Component {
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
-		this.fetchPosts();
+//        storage.queryStorage("POSTS").then(
+//            (value) => {
+//                console.log(JSON.stringify(value));
+//                if(value){
+//                    this.setState({
+//                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value)),
+//                        before: responseData.data.after,
+//                    });                    
+//                }else{
+//                    
+//                }
+//            }
+//        ).done();
+        this.fetchPosts();
     }
 	fetchPosts = () => {
 		if(this.state.endReached){
@@ -53,6 +67,7 @@ export default class MainPage extends Component {
 				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
 				before: responseData.data.after,
 			});
+            storage.setStorage( "POSTS", this.state.dataSource);
 		  })
 		  .done();
 	};
