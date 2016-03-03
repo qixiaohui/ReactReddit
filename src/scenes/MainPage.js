@@ -1,4 +1,4 @@
-import React, { Component, StyleSheet, ListView, TouchableHighlight, PropTypes, View, Text, Image } from 'react-native';
+import React, { Component, StyleSheet, ListView, TouchableHighlight, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
 import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
@@ -75,7 +75,8 @@ export default class MainPage extends Component {
 			);
 		} else {
 			return (
-				<View>
+				<View style={styles.loadingContainer}>
+					<ProgressBarAndroid style={styles.spinner} />
 				</View>
 			);
 		}
@@ -135,6 +136,11 @@ export default class MainPage extends Component {
 }
 
 var styles = StyleSheet.create({
+  loadingContainer: {
+	  flex: 1,
+	  justifyContent: 'center',
+	  alignItems: 'center',
+  },
   container: {
     flex: 1,
     flexDirection: 'row',
@@ -182,5 +188,9 @@ var styles = StyleSheet.create({
   floatingButton: {
       width: 56,
       height: 56, 
+  },
+  spinner: {
+	  width: 60,
+	  height: 60,
   },
 });

@@ -1,22 +1,32 @@
-import React, {Component, StyleSheet, View, Text, TextInput} from 'react-native'
-import { COLOR, TYPO } from 'react-native-material-design';
+import React, {Component, StyleSheet, ScrollView, View, Text, TextInput} from 'react-native'
+import {Checkbox, Button, COLOR, TYPO } from 'react-native-material-design';
 
 
 export default class Login extends Component{
     render()  {
         return(
-            <View style = {styles.container}>
-                <View style = {styles.subContainer}>
-                   <View style = {styles.rowContainer}>
-                        <Text style = {[styles.text, COLOR.paperBlueGrey]}>Username:</Text>
-                        <TextInput style={styles.textInput}></TextInput>
-                    </View>
-                    <View style = {styles.rowContainer}>
-                        <Text style = {[styles.text, COLOR.paperBlueGrey]}>Password:</Text>
-                        <TextInput style = {styles.textInput}></TextInput>
-                    </View>
-                </View>
-           </View>
+			<ScrollView>
+				<View style={styles.container}>
+					<View style={styles.rowContainer}>
+						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Username:</Text>
+						<View style={styles.textInput}>
+							<TextInput  />
+						</View>
+					</View>
+					<View style={styles.rowContainer}> 
+						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Password:</Text>
+						<View style={styles.textInput}>
+							<TextInput  />
+						</View>
+					</View>
+				</View>
+				<View style={{marginLeft: 30}}>
+					<Checkbox onCheck={()=>{}} primary={'googleGreen'} value="true" label="show password" />
+				</View>
+				<View style={{marginLeft: 40, marginRight: 40}}>
+					<Button text="Login" primary={'googleGreen'} theme="dark" raised={true}/>
+				</View>
+		   </ScrollView>
         );
     }
 }
@@ -24,16 +34,15 @@ export default class Login extends Component{
 var styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    subContainer: {
-        flex: 1,
+		alignItems: 'center',
+		flex: 1,
+		marginTop: 50,
+		marginLeft: 50,
+		marginRight: 50,
     },
     rowContainer: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'column'
     },
     text: {
         textAlign: 'center',
@@ -43,5 +52,6 @@ var styles = StyleSheet.create({
     },
     textInput: {
         flex: 2,
+		borderColor: 'grey',
     }
 });

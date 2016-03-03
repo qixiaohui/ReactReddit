@@ -30,6 +30,7 @@ export default class Toolbar extends Component {
         return (
             <MaterialToolbar
                 title={navigator && navigator.currentRoute ? navigator.currentRoute.title : 'Welcome'}
+				primary={'googleGreen'}
                 icon={navigator && navigator.isChild ? 'keyboard-backspace' : 'menu'}
                 onIconPress={() => navigator && navigator.isChild ? navigator.back() : onIconPress()}
                 actions={[{
