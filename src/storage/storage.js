@@ -2,7 +2,7 @@ import React, {AsyncStorage} from 'react-native';
 
 export default {
     queryStorage: function(key){
-        AsyncStorage.getItem(key)
+        return AsyncStorage.getItem(key);
     },
     setStorage: function(key, value){
         AsyncStorage.setItem(key, JSON.stringify(value));

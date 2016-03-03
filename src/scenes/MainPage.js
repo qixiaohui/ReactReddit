@@ -21,20 +21,18 @@ export default class MainPage extends Component {
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
-//        storage.queryStorage("POSTS").then(
-//            (value) => {
-//                console.log(JSON.stringify(value));
-//                if(value){
-//                    this.setState({
-//                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value)),
-//                        before: responseData.data.after,
-//                    });                    
-//                }else{
-//                    
-//                }
-//            }
-//        ).done();
-        this.fetchPosts();
+        storage.queryStorage("POSTS").then(
+            (value) => {
+                if(value._dataBlob){
+                    this.setState({
+                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value._dataBlob)),
+                        before: responseData.data.after,
+                    });                    
+                }else{
+                    this.fetchPosts();
+                }
+            }
+        ).done();
     }
 	fetchPosts = () => {
 		if(this.state.endReached){

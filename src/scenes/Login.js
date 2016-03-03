@@ -32,9 +32,9 @@ export default class Login extends Component{
                 'Accept': 'application/json',
             },
             body: JSON.stringify({
-                user: this.state.userName,
-                passwd: this.state.passWord,
-                api_type: 'json',
+                'user': this.state.userName,
+                'passwd': this.state.passWord,
+                'api_type': 'json',
             })
         }; 
         return fetch(url.login, obj);
@@ -47,13 +47,13 @@ export default class Login extends Component{
 					<View style={styles.rowContainer}>
 						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Username:</Text>
 						<View style={styles.textInput}>
-							<TextInput onEndEditing = {(text) => {this.setState({userName: text})}} />
+							<TextInput onChangeText={(text) => this.setState({userName: text})} value = {this.state.userName} />
 						</View>
 					</View>
 					<View style={styles.rowContainer}> 
 						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Password:</Text>
 						<View style={styles.textInput}>
-							<TextInput onEndEditing = {(text) => {this.setState({passWord: text})}} />
+							<TextInput onChangeText = {(text) => this.setState({passWord: text})} value = {this.state.passWord} />
 						</View>
 					</View>
 				</View>
@@ -61,7 +61,7 @@ export default class Login extends Component{
 					<Checkbox onCheck={()=>{}} primary={'googleGreen'} value="true" label="show password" />
 				</View>
 				<View style={{marginLeft: 40, marginRight: 40}}>
-					<Button text="Login" primary={'googleGreen'} onPress={this.fetchLogin} theme="dark" raised={true}/>
+					<Button text="Login" primary={'googleGreen'} onPress={this.onLogin} theme="dark" raised={true}/>
 				</View>
 		   </ScrollView>
         );

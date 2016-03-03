@@ -58,11 +58,11 @@ export default class Navigation extends Component {
                         onLongPress: () => this.changeScene('login')
                     }, {
                         icon: 'label',
-                        value: 'Buttons',
-                        active: route === 'buttons',
+                        value: 'SearchTopic',
+                        active: route === 'search',
                         label: '8',
-                        onPress: () => this.changeScene('buttons'),
-                        onLongPress: () => this.changeScene('buttons')
+                        onPress: () => this.changeScene('search'),
+                        onLongPress: () => this.changeScene('search')
                     }, {
                         icon: 'check-box',
                         value: 'Checkboxes',

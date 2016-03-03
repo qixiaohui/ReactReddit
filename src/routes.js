@@ -13,4 +13,8 @@ export default {
         title: 'Login',
         component: require('./scenes/Login').default,
     },
+    search: {
+        title: 'search',
+        component: require('./scenes/Search').default,
+    },
 }
