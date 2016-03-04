@@ -1,4 +1,4 @@
-import React, { Component, StyleSheet, ListView, TouchableHighlight, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
+import React, { Component, StyleSheet, ListView, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
 import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
@@ -81,11 +81,11 @@ export default class MainPage extends Component {
 					style={styles.listView}
 					onEndReached={this.fetchPosts}
 				  />
-                <TouchableHighlight style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
+                <TouchableNativeFeedback style = {styles.fabContainer} onPressOut={()=>{toast.showToast("Please login first", 2000)}}>
                     <View>
                         <FloatingActionButton style = {styles.floatingButton} />
                     </View>
-                </TouchableHighlight>
+                </TouchableNativeFeedback>
 				</View>
 			);
 		} else {
@@ -101,9 +101,10 @@ export default class MainPage extends Component {
         const { navigator } = this.context;
 		if(row.data.media){
 			return(
-                <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
 				<View>
 					<Line></Line>
+                    <TouchableNativeFeedback onPressOut={()=>{navigator.forward(null, null, {url: row.data.url});}}>
+                    <View>
 					<Card>
                         <View>
                             <Card.Media
@@ -126,14 +127,15 @@ export default class MainPage extends Component {
 							<Button value="ACTION" />
 						</Card.Actions>
 					</Card>
+                    </View>
+                    </TouchableNativeFeedback>
 				</View>		
-                </TouchableHighlight>
 			);
 		}else{
 			return (
-                <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
 				<View style={{flex: 1}}>
 					<Line></Line>
+                    <TouchableNativeFeedback onPressOut={()=>{navigator.forward(null, null, {url: row.data.url});}}>
 					  <View style={styles.container}>
 						<View style={styles.rightContainer}>
                           <View>
@@ -143,8 +145,8 @@ export default class MainPage extends Component {
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</View>
 					  </View>
+                    </TouchableNativeFeedback>
 				</View>
-                </TouchableHighlight>
 			);
 		}
 	};

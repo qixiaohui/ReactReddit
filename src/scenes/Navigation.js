@@ -43,7 +43,7 @@ export default class Navigation extends Component {
                         icon: 'home',
                         value: 'home',
                         active: !route || route === 'mainpage',
-                        onPress: () => this.changeScene('mainpage'),
+                        onPressOut: () => this.changeScene('mainpage'),
                         onLongPress: () => this.changeScene('mainpage')
                     }]}
                 />
@@ -54,7 +54,7 @@ export default class Navigation extends Component {
                         icon: 'face',
                         value: 'Login',
                         active: route === 'login',
-                        onPress: () => this.changeScene('login'),
+                        onPressOut: () => this.changeScene('login'),
                         onLongPress: () => this.changeScene('login')
                     }, {
                         icon: 'label',
