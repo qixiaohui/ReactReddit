@@ -22,6 +22,7 @@ export default class Navigation extends Component {
         this.setState({
             route: path
         });
+
         navigator.to(path, name);
         drawer.closeDrawer();
     };

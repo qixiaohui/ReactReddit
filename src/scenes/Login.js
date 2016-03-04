@@ -9,17 +9,14 @@ export default class Login extends Component{
         this.state = {
             userName: null,
             passWord: null,
+            mask: true,
         };
     }
     
     onLogin = () => {
         this.fetchLogin().then(
             function(data){
-                toast.showToast(JSON.stringify(data), 3000);
-            }
-        ).then(
-            function(e){
-                toast.showToast(e, 3000);
+                toast.showToast(JSON.stringify(data), 4000);
             }
         );
     };
@@ -53,12 +50,12 @@ export default class Login extends Component{
 					<View style={styles.rowContainer}> 
 						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Password:</Text>
 						<View style={styles.textInput}>
-							<TextInput onChangeText = {(text) => this.setState({passWord: text})} value = {this.state.passWord} />
+							<TextInput secureTextEntry={this.state.mask} onChangeText = {(text) => this.setState({passWord: text})} value = {this.state.passWord} />
 						</View>
 					</View>
 				</View>
 				<View style={{marginLeft: 30}}>
-					<Checkbox onCheck={()=>{}} primary={'googleGreen'} value="true" label="show password" />
+					<Checkbox checked={(!this.state.mask)} onCheck={()=>{this.setState({mask: !this.state.mask})}} primary={'googleGreen'} label="show password" />
 				</View>
 				<View style={{marginLeft: 40, marginRight: 40}}>
 					<Button text="Login" primary={'googleGreen'} onPress={this.onLogin} theme="dark" raised={true}/>

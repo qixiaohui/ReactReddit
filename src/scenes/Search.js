@@ -1,46 +1,82 @@
-import React, {Component, View, StyleSheet, Text, TextInput, Image, ListView} from 'react-native';
+import React, {Component, View, StyleSheet, TouchableHighlight, Text, TextInput, Image, ListView, ScrollView} from 'react-native';
+import Line from '../components/Line'
+import url from '../http/url';
 
 export default class Search extends Component{
     constructor(props){
         super(props);
 		this.state = {
-			subs: null,
+            dataSource: new ListView.DataSource({
+            rowHasChanged: (row1, row2) => row1 !== row2,        
+            }),
 		};
     }
     
+    static contextTypes = {
+        navigator: React.PropTypes.object.isRequired,
+    };
+    
+    componentDidMount() {
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows([]),
+        });
+    }
+    
+    fetchPosts = (input) => {
+		fetch(url.search+input)
+		  .then((response) => response.json())
+		  .then((responseData) => {
+            
+			this.setState({
+				dataSource: this.state.dataSource.cloneWithRows(responseData),
+			});
+		  })
+		  .done();
+    };
+    
+    renderRow = (row) => {
+        if(!row){
+            row = {name: ''}
+        }
+        return (
+            <View style={styles.rowContainer}>
+                <Line></Line>
+                <TouchableHighlight onPress = {() => {this.loadSub(row)}}>
+                    <View>
+                        <Text style={styles.text}>{row.name}</Text>
+                    </View>
+                </TouchableHighlight>
+            </View>
+        );
+    };
+
+    loadSub = (row) => {
+        const {navigator} = this.context;
+        navigator.to('mainpage.subReddit', row.name, {name: row.name});
+    };
+    
     render(){
-		if(this.state.subs){
-			return(
-					<View style={styles.container}>
-						<View style={styles.row}>
-							<View style = {{flex: 3}}>
-								<TextInput style={styles.textInput} />
-							</View>
-							<View style = {{flex: 1}}>
-								<Image style={styles.image} source={require('../img/search.png')} />
-							</View>
-						</View>
-						  <ListView
-							dataSource={this.state.dataSource}
-							renderRow={this.renderSub}
-							onEndReached={this.fetchMore}
-						  />
-					</View>
-			);
-		}else{
-			return(
-				<View style={styles.container}>
-					<View style={styles.row}>
-						<View style = {{flex: 3}}>
-							<TextInput style={styles.textInput} />
-						</View>
-						<View style = {{flex: 1}}>
-							<Image style={styles.image} source={require('../img/search.png')} />
-						</View>
-					</View>
-				</View>
-			);
-		}
+        return(
+            <View>
+                <View style={styles.container}>
+                    <View style={styles.row}>
+                        <View style = {{flex: 3}}>
+                            <TextInput onChangeText={(text) => {this.fetchPosts(text);}} style={styles.textInput} />
+                        </View>
+                        <View style = {{flex: 1}}>
+                            <Image style={styles.image} source={require('../img/search.png')} />
+                        </View>
+                    </View>
+                </View>
+                <ScrollView>
+                  <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderRow}
+                    onEndReached={this.fetchMore}
+                  />
+                </ScrollView>
+            </View>                                                    
+        );
     }
     
 }
@@ -62,10 +98,16 @@ var styles = StyleSheet.create({
 		borderColor: "#eeeeee",
 		flexDirection: 'row',
 	},
+    rowContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
     text: {
-        textAlign: 'center',
+        marginLeft: 20,
+        textAlign: 'left',
         fontWeight: 'bold',
-        fontSize: 19,
+        color: 'grey',
+        fontSize: 15,
         flex: 1,
     },
 	image: {

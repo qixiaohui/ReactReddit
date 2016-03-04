@@ -3,18 +3,19 @@ import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
-import FloatingActionButton from '../components/FloatingActionButton'
 import toast from '../modules/Toast'
 import storage from '../storage/storage'
     
-export default class MainPage extends Component {
+export default class SubReddit extends Component {
     static contextTypes = {
         navigator: React.PropTypes.object.isRequired,
     };
 	constructor(props) {
         super(props);
+        console.log("props"+props.name);
         this.state = {
-            uri: url.base+url.hot,
+            name: props.name,
+            uri: url.base+props.name+"/"+url.hot,
 			list: null,
 			before: null,
 			endReached: false,
@@ -22,7 +23,24 @@ export default class MainPage extends Component {
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
-        storage.queryStorage("POSTS").then(
+        
+        // in case there is no prop url when come back from content
+        if(!this.state.name){
+            storage.queryStorage("CURRENT_SUB").then((value) => {
+                this.setState({
+                    name: value,
+                    uri: url.base + value + "/" + url.hot,
+                });
+                this.checkCache();
+            }).done();
+        }else{
+            storage.setStorage("CURRENT_SUB",this.state.name);    
+            this.checkCache();
+        }        
+    }
+    
+    checkCache = () => {
+        storage.queryStorage(this.state.name).then(
             (value) => {
                 if(value){
                     this.setState({
@@ -33,19 +51,25 @@ export default class MainPage extends Component {
                 }
             }
         ).done();
-    }
+    };
+    
 	fetchPosts = () => {
 		if(this.state.endReached){
 			return;
 		}
 		
 		if(this.state.before){
-			this.state,uri= this.state.uri + "?beforer=" + this.state.before;
+			this.state.uri = this.state.uri + "?beforer=" + this.state.before;
 		}
 		
 		fetch(this.state.uri)
 		  .then((response) => response.json())
 		  .then((responseData) => {
+//			OFFSET+=20;
+//			var data = this.state.dataSource._dataBlob.s1.concat(responseData.businesses);
+//			this.setState({
+//			  dataSource: this.state.dataSource.cloneWithRows(data),
+//			});
 			if(this.state.before === responseData.data.after){
 				return;
 			}else if(!responseData.data.after){
@@ -60,7 +84,7 @@ export default class MainPage extends Component {
 				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
 				before: responseData.data.after,
 			});
-            storage.setStorage( "POSTS", this.state.dataSource);
+            storage.setStorage( this.state.name, this.state.dataSource);
 		  })
 		  .done();
 	};
@@ -74,11 +98,6 @@ export default class MainPage extends Component {
 					style={styles.listView}
 					onEndReached={this.fetchPosts}
 				  />
-                <TouchableHighlight style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
-                    <View>
-                        <FloatingActionButton style = {styles.floatingButton} />
-                    </View>
-                </TouchableHighlight>
 				</View>
 			);
 		} else {
@@ -97,7 +116,7 @@ export default class MainPage extends Component {
 				<View>
 					<Line></Line>
 					<Card>
-                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
                         <View>
                             <Card.Media
                                 image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
@@ -107,7 +126,7 @@ export default class MainPage extends Component {
                                     {row.data.media.oembed.title}
                                 </Text>
                                 <Text style={[TYPO.paperSubhead, COLOR.paperGrey50]}>
-                                    submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}
+                                    submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}
                                 </Text>
                             </Card.Media>
                         </View>
@@ -116,9 +135,6 @@ export default class MainPage extends Component {
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
 							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</Card.Body>
-						<Card.Actions position="right">
-							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: "r/"+row.data.subreddit});}} />
-						</Card.Actions>
 					</Card>
 				</View>				
 			);
@@ -128,16 +144,13 @@ export default class MainPage extends Component {
 					<Line></Line>
 					  <View style={styles.container}>
 						<View style={styles.rightContainer}>
-                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
                           <View>
 						      <Text style={styles.title}>{row.data.title}</Text>
-						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}</Text>
+						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}</Text>
                           </View>
                         </TouchableNativeFeedback>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
-						<Card.Actions position="right">
-							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: "r/"+row.data.subreddit});}} />
-						</Card.Actions>
 						</View>
 					  </View>
 				</View>
