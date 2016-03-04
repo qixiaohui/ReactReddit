@@ -12,6 +12,7 @@ export default class Content extends Component{
             scalesPageToFit: true,
             webView: null,
         };
+		console.log(this.state.url);
     }
     
     setWebView = (webView) => {
@@ -19,34 +20,20 @@ export default class Content extends Component{
           webView
       });  
     };
-	
-	loadFinish = () => {
-		this.setState({loadFinish: true});
-		console.log("set state");
-	};
     
     render(){
-		if(!this.state.loadFinish){
-			return(
-				<View style={styles.loadingContainer}>
-					<ProgressBarAndroid style={styles.spinner} />
-				</View>
-			);
-		}else{
-			return(
-				<View style={styles.container}>
-					<WebView  ref={(webView)=>{!this.state.webView?this.setWebView(webView):null}}
-					automaticallyAdjustContentInsets = {false}   
-					source={{uri: this.state.url}}
-					javaScriptEnabled = {true}
-					domStorageEnabled = {true}
-					decekerationRate = "normal"
-					onLoad = {this.loadFinish}
-					startInLoadingState={true}
-					/>
-				</View>
-			);
-		}
+		return(
+			<View style={styles.container}>
+				<WebView  ref={(webView)=>{!this.state.webView?this.setWebView(webView):null}}
+				automaticallyAdjustContentInsets = {false}   
+				source={{uri: this.state.url}}
+				javaScriptEnabled = {true}
+				domStorageEnabled = {true}
+				decekerationRate = "normal"
+				startInLoadingState={true}
+				/>
+			</View>
+		);
     }
 }
 
@@ -55,13 +42,4 @@ var styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
     },
-	loadingContainer: {
-	  flex: 1,
-	  justifyContent: 'center',
-	  alignItems: 'center',
-	},
-	spinner: {
-	  width: 60,
-	  height: 60,
-	},
 });

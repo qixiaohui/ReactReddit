@@ -60,7 +60,6 @@ export default class Navigation extends Component {
                         icon: 'label',
                         value: 'SearchTopic',
                         active: route === 'search',
-                        label: '8',
                         onPress: () => this.changeScene('search'),
                         onLongPress: () => this.changeScene('search')
                     }, {

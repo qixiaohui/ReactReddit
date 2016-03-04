@@ -1,4 +1,4 @@
-import React, { Component, StyleSheet, ListView, TouchableHighlight, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
+import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
 import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
@@ -23,10 +23,9 @@ export default class MainPage extends Component {
         };
         storage.queryStorage("POSTS").then(
             (value) => {
-                if(value._dataBlob){
+                if(value){
                     this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value._dataBlob)),
-                        before: responseData.data.after,
+                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value)._dataBlob.s1),
                     });                    
                 }else{
                     this.fetchPosts();
@@ -102,7 +101,7 @@ export default class MainPage extends Component {
 				<View>
 					<Line></Line>
 					<Card>
-                        <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
                         <View>
                             <Card.Media
                                 image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
@@ -116,7 +115,7 @@ export default class MainPage extends Component {
                                 </Text>
                             </Card.Media>
                         </View>
-                        </TouchableHighlight>
+                        </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
 							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
@@ -133,12 +132,12 @@ export default class MainPage extends Component {
 					<Line></Line>
 					  <View style={styles.container}>
 						<View style={styles.rightContainer}>
-                        <TouchableHighlight onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback onPress={()=>{navigator.forward(null, null, {url: row.data.url});}}>
                           <View>
 						      <Text style={styles.title}>{row.data.title}</Text>
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()} r/{row.data.subreddit}</Text>
                           </View>
-                        </TouchableHighlight>
+                        </TouchableNativeFeedback>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</View>
 					  </View>
