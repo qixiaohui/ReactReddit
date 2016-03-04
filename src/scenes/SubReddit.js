@@ -15,7 +15,7 @@ export default class SubReddit extends Component {
         console.log("props"+props.name);
         this.state = {
             name: props.name,
-            uri: url.base+props.name+"/"+url.hot,
+            uri: url.baseSubreddit+props.name+"/"+url.hot,
 			list: null,
 			before: null,
 			endReached: false,
@@ -29,7 +29,7 @@ export default class SubReddit extends Component {
             storage.queryStorage("CURRENT_SUB").then((value) => {
                 this.setState({
                     name: value,
-                    uri: url.base + value + "/" + url.hot,
+                    uri: url.baseSubreddit + value + "/" + url.hot,
                 });
                 this.checkCache();
             }).done();

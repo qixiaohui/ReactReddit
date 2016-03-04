@@ -117,7 +117,7 @@ export default class MainPage extends Component {
 							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</Card.Body>
 						<Card.Actions position="right">
-							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: "r/"+row.data.subreddit});}} />
+							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
 						</Card.Actions>
 					</Card>
 				</View>				
@@ -136,7 +136,7 @@ export default class MainPage extends Component {
                         </TouchableNativeFeedback>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						<Card.Actions position="right">
-							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: "r/"+row.data.subreddit});}} />
+							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
 						</Card.Actions>
 						</View>
 					  </View>
