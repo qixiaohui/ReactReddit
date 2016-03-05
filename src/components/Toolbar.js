@@ -34,7 +34,7 @@ export default class Toolbar extends Component {
                 icon={navigator && navigator.isChild ? 'keyboard-backspace' : 'menu'}
                 onIconPress={() => navigator && navigator.isChild ? navigator.back() : onIconPress()}
                 actions={[{
-                    icon: 'warning',
+                    icon: 'refresh',
                     badge: { animate: true },
                 }]}
                 rightIconStyle={{

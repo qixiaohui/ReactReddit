@@ -1,4 +1,5 @@
 import React, {Component, View, StyleSheet, TouchableHighlight, Text, TextInput, Image, ListView, ScrollView} from 'react-native';
+import { Icon, List } from 'react-native-material-design';
 import Line from '../components/Line'
 import url from '../http/url';
 
@@ -42,8 +43,9 @@ export default class Search extends Component{
             <View style={styles.rowContainer}>
                 <Line></Line>
                 <TouchableHighlight onPress = {() => {this.loadSub(row)}}>
-                    <View>
+                    <View style={styles.subRow}>
                         <Text style={styles.text}>{row.name}</Text>
+                        <Icon style={styles.icon} name="add-circle" />
                     </View>
                 </TouchableHighlight>
             </View>
@@ -57,24 +59,22 @@ export default class Search extends Component{
     
     render(){
         return(
-            <View>
+            <View style={{flex: 1}}>
                 <View style={styles.container}>
                     <View style={styles.row}>
                         <View style = {{flex: 3}}>
                             <TextInput onChangeText={(text) => {this.fetchPosts(text);}} style={styles.textInput} />
                         </View>
                         <View style = {{flex: 1}}>
-                            <Image style={styles.image} source={require('../img/search.png')} />
+                            <Icon name="search" style = {styles.image} />
                         </View>
                     </View>
                 </View>
-                <ScrollView>
-                  <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this.renderRow}
-                    onEndReached={this.fetchMore}
-                  />
-                </ScrollView>
+                <ListView
+                dataSource={this.state.dataSource}
+                renderRow={this.renderRow}
+                onEndReached={this.fetchMore}
+                />
             </View>                                                    
         );
     }
@@ -83,7 +83,6 @@ export default class Search extends Component{
 
 var styles = StyleSheet.create({
 	container: {
-		flex: 1,
 		flexDirection: 'column',
 		marginTop: 15,
 		marginLeft: 40,
@@ -102,13 +101,21 @@ var styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
     },
+    subRow: {
+        flex: 1,
+        flexDirection: 'row',
+    },
     text: {
         marginLeft: 20,
         textAlign: 'left',
         fontWeight: 'bold',
         color: 'grey',
-        fontSize: 15,
+        fontSize: 19,
+        flex: 4,
+    },
+    icon:{
         flex: 1,
+        alignSelf: 'flex-end',
     },
 	image: {
 		marginLeft: 10,
