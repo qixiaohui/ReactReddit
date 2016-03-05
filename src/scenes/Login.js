@@ -14,26 +14,39 @@ export default class Login extends Component{
     }
     
     onLogin = () => {
-        this.fetchLogin().then(
-            function(data){
-                toast.showToast(JSON.stringify(data), 4000);
-            }
-        );
+		
+        this.fetchLogin()
+			.then((response) => {
+				if(response.status === 200){
+					return response.json()
+				}else{
+					return null; 
+		  		}
+			})
+			.then((responseData) => {
+				if(!responseData){
+					toast.showToast("login failed", 3000);
+				}else{
+					toast.showToast("login suceess", 3000);
+				}
+			})
+			.done();
     };
     
     fetchLogin = () => {
         var obj = {
             method: 'POST',
             headers: {
-                'Content-type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                'user': this.state.userName,
-                'passwd': this.state.passWord,
-                'api_type': 'json',
-            })
+                'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': "application/json",
+            }
         }; 
+		
+		// ** normal json stringify body doesnt work 
+		obj.body = "user="+this.state.userName+
+			"&passwd="+this.state.passWord+
+			"&api_type=json";
+		
         return fetch(url.login, obj);
     };
     

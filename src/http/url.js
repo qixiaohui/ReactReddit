@@ -3,6 +3,6 @@ export default {
     baseSubreddit: "http://www.reddit.com/r/",
 	hot: "hot.json",
     new: "new.json",
-    login: " https://ssl.reddit.com/api/login",
+    login: "https://ssl.reddit.com/api/login",
     search: "https://api.reddit.com/api/subreddits_by_topic.json?query=",
 }
