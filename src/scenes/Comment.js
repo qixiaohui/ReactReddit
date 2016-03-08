@@ -1,6 +1,7 @@
 import React, {Component, ScrollView, StyleSheet, Image, ProgressBarAndroid, View, Text} from 'react-native';
 import CommentCard from '../components/CommentCard'
 import moment from 'moment'
+import Line from '../components/Line'
 import _ from 'underscore'
 import url from '../http/url'
 import toast from '../modules/Toast'
@@ -61,9 +62,12 @@ export default class Comment extends Component{
 					<View>
 						<Text style={styles.headerInfo}>({this.state.comments[0].data.children[0].data.domain}) {this.state.comments[0].data.children[0].data.num_comments} comments</Text>
 					</View>
+					<Line></Line>
 					<View>
 						{_.map(this.state.commentArr, function(comment) {
-							return (<CommentCard data={comment} />);
+							if(comment.score){
+								return (<CommentCard data={comment} />);
+							}
 						})}
 					</View>
 				</ScrollView>

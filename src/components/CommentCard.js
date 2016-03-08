@@ -13,7 +13,7 @@ export default class CommentCard extends Component {
 		return(
 			<View style={{marginLeft: this.state.data.indent*15}}>
 				<View style={styles.commentContainer}>
-					<Text style = {styles.commentHeader}><Text style={{color: '#000000'}}>{this.state.data.author}</Text> {this.state.data.score} points {moment.unix(this.state.data.created).fromNow()}</Text>
+					<Text style = {styles.commentHeader}><Text style={{color: '#36689a'}}>{this.state.data.author}</Text> {this.state.data.score} points {moment.unix(this.state.data.created).fromNow()}</Text>
 					<Text style = {styles.commentBody}>{this.state.data.body}</Text>
 				</View>
 			</View>
@@ -37,7 +37,7 @@ var styles = StyleSheet.create({
 		color: '#000000',
 	},
 	commentHeader: {
-		fontSize: 11,
+		fontSize: 9,
 		fontWeight: 'bold',
 		color: '#888888',
 	}
