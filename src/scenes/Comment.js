@@ -59,10 +59,7 @@ export default class Comment extends Component{
 						</View>
 					</View>
 					<View>
-						<Text style={styles.headerInfo}>({this.state.comments[0].data.children[0].data.domain})</Text>
-					</View>
-					<View>
-						<Text style={styles.headerInfo}>{this.state.comments[0].data.children[0].data.num_comments} comments</Text>
+						<Text style={styles.headerInfo}>({this.state.comments[0].data.children[0].data.domain}) {this.state.comments[0].data.children[0].data.num_comments} comments</Text>
 					</View>
 					<View>
 						{_.map(this.state.commentArr, function(comment) {

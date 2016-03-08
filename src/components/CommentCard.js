@@ -24,6 +24,7 @@ export default class CommentCard extends Component {
 var styles = StyleSheet.create({
 	commentContainer: {
 		marginLeft: 15,
+		marginRight: 10,
 		marginTop: 5,
 		marginBottom: 5,
 		borderWidth: 1,
