@@ -26,27 +26,19 @@ export default class Content extends Component{
 	};
     
     render(){
-		if(!this.state.loadFinish){
-			return(
-				<View style={styles.loadingContainer}>
-					<ProgressBarAndroid style={styles.spinner} />
-				</View>
-			);
-		}else{
-			return(
-				<View style={styles.container}>
-					<WebView  ref={(webView)=>{!this.state.webView?this.setWebView(webView):null}}
-					automaticallyAdjustContentInsets = {false}   
-					source={{uri: this.state.url}}
-					javaScriptEnabled = {true}
-					domStorageEnabled = {true}
-					decekerationRate = "normal"
-					onLoad = {this.loadFinish}
-					startInLoadingState={true}
-					/>
-				</View>
-			);
-		}
+		return(
+			<View style={styles.container}>
+				<WebView  ref={(webView)=>{!this.state.webView?this.setWebView(webView):null}}
+				automaticallyAdjustContentInsets = {false}   
+				source={{uri: this.state.url}}
+				javaScriptEnabled = {true}
+				domStorageEnabled = {true}
+				decekerationRate = "normal"
+				onLoad = {this.loadFinish}
+				startInLoadingState={true}
+				/>
+			</View>
+		);
     }
 }
 

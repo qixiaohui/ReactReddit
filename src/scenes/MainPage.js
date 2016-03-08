@@ -1,4 +1,4 @@
-import React, { Component, StyleSheet, ListView, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
+import React, { Component, StyleSheet, ListView, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image, DeviceEventEmitter } from 'react-native';
 import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
@@ -10,13 +10,55 @@ import storage from '../storage/storage'
 export default class MainPage extends Component {
     static contextTypes = {
         navigator: React.PropTypes.object.isRequired,
+        drawer: React.PropTypes.object.isRequired,
     };
+    handleKey = (key) => {
+    	const { navigator } = this.context;
+        switch(key){
+            case "0":
+        		if(this.state.dataSource._dataBlob.s1.length>=0 &&
+        		 !this.state.focusDrawer){
+    				navigator.forward(null, null, {url: this.state.dataSource._dataBlob.s1[this.state.index].data.url});
+        		}
+                break;
+            case "1":
+            	if(this.state.index>0 && !this.state.focusDrawer){
+            		this.state.index--;
+            	}
+                break;
+            case "2":
+            	this.setState({
+            		focusDrawer: false,
+            	});
+                break;
+            case "3":
+            	if(this.state.index<this.state.dataSource._dataBlob.s1.length &&
+            	 !this.state.focusDrawer){
+            		this.state.index++;
+            	}
+                break;
+            case "4":
+            	this.setState({
+            		focusDrawer: true,
+            	});
+                break;       
+        }
+    };
+    componentDidMount(){
+    	const { drawer } = this.context;
+    	setTimeout(function(){ 
+    		drawer.openDrawer();
+    		//this.state.drawer.closeDrawer();
+    	 }, 1000);
+    }
 	constructor(props) {
         super(props);
         this.state = {
 			list: null,
 			before: null,
 			endReached: false,
+			index: 0,
+			focusDrawer: true,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
@@ -35,6 +77,11 @@ export default class MainPage extends Component {
 //            }
 //        ).done();
         this.fetchPosts();
+    }
+    componentWillMount() {
+        DeviceEventEmitter.addListener('keyDown', function(e: Event){
+            this.handleKey(e.code);
+        }.bind(this));
     }
 	fetchPosts = () => {
 		if(this.state.endReached){
