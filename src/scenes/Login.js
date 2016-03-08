@@ -2,6 +2,7 @@ import React, {Component, StyleSheet, ScrollView, View, Text, TextInput} from 'r
 import {Checkbox, Button, COLOR, TYPO } from 'react-native-material-design';
 import toast from '../modules/Toast'
 import url from '../http/url'
+import storage from '../storage/storage'
 
 export default class Login extends Component{
     constructor(props){
@@ -27,7 +28,7 @@ export default class Login extends Component{
 				if(!responseData){
 					toast.showToast("login failed", 3000);
 				}else{
-					toast.showToast("login suceess", 3000);
+					storage.setStorage("COOKIE", responseData.json.data);
 				}
 			})
 			.done();
