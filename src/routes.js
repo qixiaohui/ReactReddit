@@ -7,12 +7,18 @@ export default {
             content: {
                 component: require('./scenes/Content').default,
             },
+			comments: {
+				component: require('./scenes/Comment').default,
+			},
             subReddit: {
                 component: require('./scenes/SubReddit').default,
                 children: {
                     content: {
                         component: require('./scenes/Content').default,
                     },
+					comment: {
+						component: require('./scenes/Comment').default,
+					}
                 }
             }
         },

@@ -114,7 +114,9 @@ export default class MainPage extends Component {
                         </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
+								<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+							</TouchableHighlight>
 						</Card.Body>
 						<Card.Actions position="right">
 							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
@@ -134,7 +136,9 @@ export default class MainPage extends Component {
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}</Text>
                           </View>
                         </TouchableNativeFeedback>
+						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id});}}>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+						</TouchableHighlight>
 						<Card.Actions position="right">
 							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
 						</Card.Actions>
