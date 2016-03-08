@@ -1,12 +1,17 @@
 import React, {Component, ScrollView, StyleSheet, Image, ProgressBarAndroid, View, Text} from 'react-native';
+import CommentCard from '../components/CommentCard'
+import moment from 'moment'
+import _ from 'underscore'
 import url from '../http/url'
+import toast from '../modules/Toast'
 export default class Comment extends Component{
 	constructor(props) {
 		super(props);
 		this.state = {
 			sub: props.sub,
 			id: props.id,
-			comments: null
+			comments: null,
+			commentArr: []
 		};
 		
 		this.fetchComments();
@@ -19,8 +24,25 @@ export default class Comment extends Component{
 				this.setState({
 					comments: responseData
 				});
+				this.renderComments(this.state.comments[1].data.children, 0);
+				this.forceUpdate();
 		  })
-		  .done();
+	};
+
+	renderComments = (data, indent) => {
+		_.each(data, function(comment) {
+			this.state.commentArr.push({
+				author: comment.data.author,
+				body: comment.data.body,
+				created: comment.data.created,
+				score: comment.data.score,
+				indent: indent
+			});
+
+			if(comment.data.replies){
+				this.renderComments(comment.data.replies.data.children, indent++);
+			}
+		}.bind(this));
 	};
 	
 	render() {
@@ -28,12 +50,24 @@ export default class Comment extends Component{
 			return(
 				<ScrollView>
 					<View style={styles.headerContainer}>
-						<View style={{flex: 1}}>
+						<View style={{flex: 1.5}}>
 							<Image style = {styles.thumbnail} source={{uri:this.state.comments[0].data.children[0].data.thumbnail}} />
 						</View>
 						<View style={{flex: 3}}>
-							<Text>{this.state.comments[0].data.children[0].data.title}</Text>
+							<Text style={styles.headerTitle}>{this.state.comments[0].data.children[0].data.title}</Text>
+							<Text style={styles.headerInfo}>submitted {moment.unix(this.state.comments[0].data.children[0].data.created_utc).fromNow()} ago by {this.state.comments[0].data.children[0].data.author}</Text>
 						</View>
+					</View>
+					<View>
+						<Text style={styles.headerInfo}>({this.state.comments[0].data.children[0].data.domain})</Text>
+					</View>
+					<View>
+						<Text style={styles.headerInfo}>{this.state.comments[0].data.children[0].data.num_comments} comments</Text>
+					</View>
+					<View>
+						{_.map(this.state.commentArr, function(comment) {
+							return (<CommentCard data={comment} />);
+						})}
 					</View>
 				</ScrollView>
 			);
@@ -49,6 +83,7 @@ export default class Comment extends Component{
 
 var styles = StyleSheet.create({
     headerContainer: {
+    	marginTop: 10,
         flex: 1,
         flexDirection: 'row',
     },
@@ -62,7 +97,18 @@ var styles = StyleSheet.create({
 		height: 60,
 	},
 	thumbnail: {
-		width: 50,
-		height: 40,
+		marginLeft:10,
+		marginTop:5,
+		width: 60,
+		height: 60,
+	},
+	headerTitle: {
+		fontSize: 17,
+		color: '#551a8b',
+	},
+	headerInfo: {
+		marginLeft:10,
+		fontSize: 12,
+		color: '#888888'
 	}
 });
