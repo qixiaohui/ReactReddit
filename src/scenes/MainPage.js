@@ -1,5 +1,5 @@
 import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
-import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
+import { Card, Button, COLOR, TYPO, Icon } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
@@ -115,7 +115,7 @@ export default class MainPage extends Component {
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
 							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
-								<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+								<Text style={styles.commentNum}>{row.data.num_comments} comments </Text>
 							</TouchableHighlight>
 						</Card.Body>
 						<Card.Actions position="right">

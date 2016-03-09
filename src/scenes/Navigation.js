@@ -37,42 +37,6 @@ export default class Navigation extends Component {
                         active: route === 'search',
                         onPress: () => this.changeScene('search'),
                         onLongPress: () => this.changeScene('search')
-                    }, {
-                        icon: 'check-box',
-                        value: 'Checkboxes',
-                        label: '10',
-                        active: route === 'checkboxes',
-                        onPress: () => this.changeScene('checkboxes'),
-                        onLongPress: () => this.changeScene('checkboxes')
-                    }, {
-                        icon: 'label',
-                        value: 'Dividers',
-                        label: '10',
-                        active: route === 'dividers',
-                        onPress: () => this.changeScene('dividers'),
-                        onLongPress: () => this.changeScene('dividers')
-                    }, {
-                        icon: 'label',
-                        value: 'Icon Toggles',
-                        label: 'NEW',
-                        active: route === 'icon-toggles',
-                        onPress: () => this.changeScene('icon-toggles'),
-                        onLongPress: () => this.changeScene('icon-toggles')
-                    }, {
-                        icon: 'radio-button-checked',
-                        value: 'Radio Buttons',
-                        label: '8',
-                        active: route === 'radio-buttons',
-                        onPress: () => this.changeScene('radio-buttons'),
-                        onLongPress: () => this.changeScene('radio-buttons')
-                    },
-                    {
-                        icon: 'label',
-                        value: 'Subheaders',
-                        label: '4',
-                        active: route === 'subheaders',
-                        onPress: () => this.changeScene('subheaders'),
-                        onLongPress: () => this.changeScene('subheaders')
                     }]});
 				}else{
 					this.setState({items: [{
@@ -87,42 +51,6 @@ export default class Navigation extends Component {
                         active: route === 'search',
                         onPress: () => this.changeScene('search'),
                         onLongPress: () => this.changeScene('search')
-                    }, {
-                        icon: 'check-box',
-                        value: 'Checkboxes',
-                        label: '10',
-                        active: route === 'checkboxes',
-                        onPress: () => this.changeScene('checkboxes'),
-                        onLongPress: () => this.changeScene('checkboxes')
-                    }, {
-                        icon: 'label',
-                        value: 'Dividers',
-                        label: '10',
-                        active: route === 'dividers',
-                        onPress: () => this.changeScene('dividers'),
-                        onLongPress: () => this.changeScene('dividers')
-                    }, {
-                        icon: 'label',
-                        value: 'Icon Toggles',
-                        label: 'NEW',
-                        active: route === 'icon-toggles',
-                        onPress: () => this.changeScene('icon-toggles'),
-                        onLongPress: () => this.changeScene('icon-toggles')
-                    }, {
-                        icon: 'radio-button-checked',
-                        value: 'Radio Buttons',
-                        label: '8',
-                        active: route === 'radio-buttons',
-                        onPress: () => this.changeScene('radio-buttons'),
-                        onLongPress: () => this.changeScene('radio-buttons')
-                    },
-                    {
-                        icon: 'label',
-                        value: 'Subheaders',
-                        label: '4',
-                        active: route === 'subheaders',
-                        onPress: () => this.changeScene('subheaders'),
-                        onLongPress: () => this.changeScene('subheaders')
                     }]});
 				}
 			}
@@ -168,14 +96,13 @@ export default class Navigation extends Component {
                 />
                 <Divider style={{ marginTop: 8 }} />
                 <Drawer.Section
-                    title="Config"
+                    title="Settings"
                     items={[{
-                        icon: 'invert-colors',
-                        value: 'Change Theme',
-                        label: '24',
-                        active: route === 'themes',
-                        onPress: () => this.changeScene('themes'),
-                        onLongPress: () => this.changeScene('themes')
+                        icon: 'settings',
+                        value: 'settings',
+                        active: route === 'settings',
+                        onPress: () => this.changeScene('settings'),
+                        onLongPress: () => this.changeScene('settings')
                     }]}
                 />
 

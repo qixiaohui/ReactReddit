@@ -133,7 +133,9 @@ export default class SubReddit extends Component {
                         </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
+								<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+							</TouchableHighlight>
 						</Card.Body>
 					</Card>
 				</View>				
@@ -150,7 +152,9 @@ export default class SubReddit extends Component {
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}</Text>
                           </View>
                         </TouchableNativeFeedback>
+						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+						</TouchableHighlight>
 						</View>
 					  </View>
 				</View>
@@ -217,4 +221,7 @@ var styles = StyleSheet.create({
 	  width: 60,
 	  height: 60,
   },
+  commentIcon: {
+	  marginTop: 10,
+  }
 });

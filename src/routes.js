@@ -16,7 +16,7 @@ export default {
                     content: {
                         component: require('./scenes/Content').default,
                     },
-					comment: {
+					comments: {
 						component: require('./scenes/Comment').default,
 					}
                 }
@@ -31,8 +31,8 @@ export default {
         title: 'search',
         component: require('./scenes/Search').default,
     },
-    theme: {
-        title: 'theme', 
-        component: require('./scenes/Theme').default,
+    settings: {
+        title: 'settings', 
+        component: require('./scenes/Settings').default,
     },
 }

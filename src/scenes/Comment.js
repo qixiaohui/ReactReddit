@@ -1,4 +1,5 @@
-import React, {Component, ScrollView, StyleSheet, Image, ProgressBarAndroid, View, Text} from 'react-native';
+import React, {Component, ScrollView, StyleSheet, Image, ProgressBarAndroid, View, Text, TouchableHighlight} from 'react-native';
+import storage from '../storage/storage'
 import CommentCard from '../components/CommentCard'
 import moment from 'moment'
 import Line from '../components/Line'
@@ -46,6 +47,18 @@ export default class Comment extends Component{
 		}.bind(this));
 	};
 	
+	reply = () => {
+        storage.queryStorage('COOKIE').then(
+            (value) => {
+                if(value){
+                    toast.showToast("reply", 2000);
+                }else{
+                	toast.showToast("Please login first", 2000);
+                }
+            }
+        ).done();
+	};
+	
 	render() {
 		if(this.state.comments){
 			return(
@@ -66,7 +79,11 @@ export default class Comment extends Component{
 					<View>
 						{_.map(this.state.commentArr, function(comment) {
 							if(comment.score){
-								return (<CommentCard data={comment} />);
+								return (
+						 	<TouchableHighlight onPress={() => {toast.showToast('here', 2000);}}>
+						 		<CommentCard data={comment} />
+							</TouchableHighlight>
+						 );
 							}
 						})}
 					</View>
@@ -94,7 +111,7 @@ var styles = StyleSheet.create({
 	  alignItems: 'center',
 	},
 	spinner: {
-		width: 60,
+		width: 70,
 		height: 60,
 	},
 	thumbnail: {
