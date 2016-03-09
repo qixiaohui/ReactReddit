@@ -1,6 +1,10 @@
 export default {
+    bobView: {
+        title: 'BobView',
+       initialRoute: true, 
+       component: require('./scenes/BobViewList').default,
+    },
     mainpage: {
-        initialRoute: true,
         title: 'Popular',
         component: require('./scenes/MainPage').default,
         children: {

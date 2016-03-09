@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.modules.toast.ToastModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.views.image.ReactImageManager;
+import com.reactreddit.manager.BobViewManager;
 import com.reactreddit.manager.FloatingActionButtonManager;
 import com.reactreddit.manager.GeneralViewManager;
 import com.reactreddit.modules.MyToast;
@@ -34,6 +35,6 @@ public class FbReactPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Arrays.<ViewManager> asList(new ReactImageManager(), new FloatingActionButtonManager(), new GeneralViewManager());
+        return Arrays.<ViewManager> asList(new ReactImageManager(), new FloatingActionButtonManager(), new BobViewManager(), new GeneralViewManager());
     }
 }

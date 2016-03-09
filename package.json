@@ -9,8 +9,10 @@
     "react-native": "^0.20.0"
   },
   "devDependencies": {
+    "fs": "0.0.2",
     "moment": "^2.11.2",
     "react-native-material-design": "^0.3.2",
-    "react-native-material-kit": "^0.3.0"
+    "react-native-material-kit": "^0.3.0",
+    "read-file": "^0.2.0"
   }
 }
