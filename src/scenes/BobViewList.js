@@ -51,17 +51,24 @@ export default class BobViewList extends Component{
 //					style={styles.listView}
 //					 />
 //				</View>);
-//            var map = {
-//                poster: this.state.row.posters.thumbnail,
-//                title: this.state.row.title,
-//                year: this.state.row.year,
-//                rating: this.state.row.ratings.critics_score,
-//                actor: this.state.row.abridged_cast[0].name 
-//            };
-            toast.showToast("bob", 3000);
+		if(this.state.row){
+			console.log("*&&&&"+JSON.stringify(this.state.row));
+           var map = {
+               poster: this.state.row.posters.thumbnail,
+               title: this.state.row.title,
+               year: this.state.row.year,
+               rating: this.state.row.ratings.critics_score,
+               actor: this.state.row.abridged_cast[0].name 
+           };
+           console.log("%&&"+JSON.stringify(map));
+            console.log("bobview"+BobView);
+            console.log(<BobView />);
             return(<View style={{flex: 1}}>
-                   <BobView />
+                   <BobView bobInfo={this.map} style={{width: 2000, height: 2000}}  />
             	</View>);
+        }else{
+        	return(<View></View>);
+        }
 	}
 }
 var styles = StyleSheet.create({
