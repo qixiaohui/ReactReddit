@@ -1,9 +1,14 @@
-import React,{Component, StyleSheet, View, Text, ProgressBarAndroid} from 'react-native';
-import { Subheader, Divider, Checkbox, Icon, COLOR, List } from 'react-native-material-design';
+import React,{Component, StyleSheet, View, Text, ProgressBarAndroid, ListView, TouchableNativeFeedback} from 'react-native';
+import { Subheader, Icon, COLOR, Divider } from 'react-native-material-design';
 import Line from '../components/Line'
 import storage from '../storage/storage'
+import _ from 'underscore'
 
 export default class Settings extends Component {
+    static contextTypes = {
+        navigator: React.PropTypes.object.isRequired,
+    };
+	
 	constructor(props){
 		super(props);
 		this.state = {
@@ -45,19 +50,51 @@ export default class Settings extends Component {
 	};
 
 	render(){
+		const { navigator } = this.context;
 		if(this.state.configObj){
 			return(
-	            	// <Subheader text="Account Setting" primaryColor={COLOR.googleGreen}/>
-	            	<View>
-	            	<List  primaryText = "login" />
-	            	</View>
-	            	// {this.state.configObj.accountSetting.map((list) => {
-	            	// 	return(<List
-	            	// 	leftIcon = {
-	            	// 		<Icon name = {list.icon} size = {24} />
-	            	// 	}
-	            	// 	 primaryText = {list.path} />);
-	            	// })}            	
+				<View>
+					<View>
+						<Subheader text="Acount Setting" color="googleGreen"  />
+					</View>
+					{_.map(this.state.configObj.accountSetting, function(setting) {
+						return(
+							<TouchableNativeFeedback onPress={()=>{navigator.forward(setting.path, null, null)}}>
+							<View>
+								<View style={styles.row}>
+									<View style={styles.icon}>
+										<Icon color="googleGreen" name={setting.icon} />
+									</View>
+									<View style={styles.options}>
+										<Text style={styles.optionText}>{setting.path}</Text>
+									</View>
+								</View>
+								<Divider inset />
+							</View>
+							</TouchableNativeFeedback>
+						);
+					})}
+					<View>
+						<Subheader text="Preference" color="googleGreen"  />
+					</View>
+					{_.map(this.state.configObj.preference, function(setting) {
+						return(
+							<TouchableNativeFeedback onPress={()=>{navigator.forward(setting.path, null, null)}}>
+							<View>
+								<View style={styles.row}>
+									<View style={styles.icon}>
+										<Icon color="googleGreen" name={setting.icon} />
+									</View>
+									<View style={styles.options}>
+										<Text style={styles.optionText}>{setting.path}</Text>
+									</View>
+								</View>
+								<Divider inset />
+							</View>
+							</TouchableNativeFeedback>
+						);
+					})}
+				</View>          	
 			);
 		}else{
 			return (
@@ -78,5 +115,26 @@ var styles = StyleSheet.create({
 	spinner: {
 		width: 60,
 		height: 60,
+	},
+	row: {
+		flex: 1,
+		flexDirection: 'row'
+	},
+	icon: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginTop: 15,
+	},
+	options: {
+		flex: 4,
+		alignItems: 'flex-start',
+		justifyContent: 'center'
+	},
+	optionText: {
+		color: '#000000',
+		fontSize: 16,
+		marginBottom: 20,
+		marginTop: 20,
 	}
 });

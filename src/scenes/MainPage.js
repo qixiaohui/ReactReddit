@@ -1,5 +1,5 @@
 import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
-import { Card, Button, COLOR, TYPO, Icon } from 'react-native-material-design';
+import { Card, Button, COLOR, TYPO, Icon, List } from 'react-native-material-design';
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
@@ -65,6 +65,7 @@ export default class MainPage extends Component {
 		  .done();
 	};
 	render() {
+		console.log(Button+"&&"+List);
 		if(this.state.dataSource._dataBlob){
 			return (
 				<View style={{flex: 1}}>

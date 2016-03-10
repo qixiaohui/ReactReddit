@@ -56,6 +56,7 @@ export default class Navigation extends Component {
                 />
                 <Divider style={{ marginTop: 8 }} />
                 <Drawer.Section
+					title="Activity"
                     items={[{
                         icon: 'search',
                         value: 'SearchTopic',
@@ -66,6 +67,7 @@ export default class Navigation extends Component {
                 />
                 <Divider style={{ marginTop: 8 }} />
                 <Drawer.Section
+					title="Setting"
                     items={[{
                         icon: 'settings',
                         value: 'settings',

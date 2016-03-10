@@ -34,11 +34,11 @@ export default {
             login: {
                 component: require('./scenes/Login').default
             },
+             theme: {
+                 component: require('./scenes/Themes').default
+             },
             // logout: {
             //     component: require('./scenes/Logout').default
-            // },
-            // theme: {
-            //     component: require('./scenes/Theme').default
             // },
             // friends: {
             //     component: require('./scenes/Friends').default
