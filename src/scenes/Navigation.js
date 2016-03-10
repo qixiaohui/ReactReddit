@@ -20,41 +20,6 @@ export default class Navigation extends Component {
 			headline: 'Hello redditor!'
         }
 		
-		storage.queryStorage('COOKIE').then(
-			(value) => {
-				var route = this.state.route;
-				
-				if(!value){
-					this.setState({items: [{
-                        icon: 'face',
-                        value: 'Login',
-                        active: route === 'login',
-                        onPress: () => this.changeScene('login'),
-                        onLongPress: () => this.changeScene('login')
-                    }, {
-                        icon: 'search',
-                        value: 'SearchTopic',
-                        active: route === 'search',
-                        onPress: () => this.changeScene('search'),
-                        onLongPress: () => this.changeScene('search')
-                    }]});
-				}else{
-					this.setState({items: [{
-                        icon: 'face',
-                        value: 'Logout',
-                        active: route === 'logout',
-                        onPress: () => this.changeScene('logout'),
-                        onLongPress: () => this.changeScene('logout')
-                    }, {
-                        icon: 'search',
-                        value: 'SearchTopic',
-                        active: route === 'search',
-                        onPress: () => this.changeScene('search'),
-                        onLongPress: () => this.changeScene('search')
-                    }]});
-				}
-			}
-		).done();
     }
 
     changeScene = (path, name) => {
@@ -89,14 +54,18 @@ export default class Navigation extends Component {
                         onLongPress: () => this.changeScene('mainpage')
                     }]}
                 />
-
+                <Divider style={{ marginTop: 8 }} />
                 <Drawer.Section
-                    title="Activities"
-                    items={this.state.items}
+                    items={[{
+                        icon: 'search',
+                        value: 'SearchTopic',
+                        active: route === 'search',
+                        onPress: () => this.changeScene('search'),
+                        onLongPress: () => this.changeScene('search')
+                    }]}
                 />
                 <Divider style={{ marginTop: 8 }} />
                 <Drawer.Section
-                    title="Settings"
                     items={[{
                         icon: 'settings',
                         value: 'settings',

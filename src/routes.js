@@ -23,10 +23,6 @@ export default {
             }
         },
     },
-    login: {
-        title: 'Login',
-        component: require('./scenes/Login').default,
-    },
     search: {
         title: 'search',
         component: require('./scenes/Search').default,
@@ -34,5 +30,25 @@ export default {
     settings: {
         title: 'settings', 
         component: require('./scenes/Settings').default,
+        children: {
+            login: {
+                component: require('./scenes/Login').default
+            },
+            // logout: {
+            //     component: require('./scenes/Logout').default
+            // },
+            // theme: {
+            //     component: require('./scenes/Theme').default
+            // },
+            // friends: {
+            //     component: require('./scenes/Friends').default
+            // },
+            // password: {
+            //     component: require('./scenes/Password').default
+            // },
+            // block: {
+            //     component: require('./scenes/Block').default
+            // }
+        }
     },
 }
