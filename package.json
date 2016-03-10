@@ -6,12 +6,14 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react-native": "^0.20.0"
+    "react-native": "^0.21.0"
   },
   "devDependencies": {
     "moment": "^2.11.2",
+    "react-native": "^0.20.0",
     "react-native-material-design": "^0.3.2",
     "react-native-material-kit": "^0.3.0",
+    "react-native-simple-events": "^1.0.1",
     "underscore": "^1.8.3"
   }
 }

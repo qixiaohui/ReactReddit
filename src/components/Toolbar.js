@@ -1,5 +1,6 @@
 import React, { Component, PropTypes, Text, View } from 'react-native';
 import { Toolbar as MaterialToolbar } from 'react-native-material-design';
+import Events from 'react-native-simple-events';
 
 export default class Toolbar extends Component {
 
@@ -14,13 +15,23 @@ export default class Toolbar extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            theme: 'googleGreen',
         };
     }
 
+    onChangeTheme = (data) => {
+        console.log("theme***"+data);
+        this.setState({
+            theme: data.theme
+        });
+    };
+
     componentDidMount = () => {
+        Events.on('CHANGE_THEME', 'THEME_LISTENER', this.onChangeTheme);
     };
 
     componentWillUnmount() {
+        Events.rm('CHANGE_THEME', 'THEME_LISTENER');
     }
 
     render() {
@@ -30,7 +41,7 @@ export default class Toolbar extends Component {
         return (
             <MaterialToolbar
                 title={navigator && navigator.currentRoute ? navigator.currentRoute.title : 'Welcome'}
-				primary={'googleGreen'}
+				primary={this.state.theme}
                 icon={navigator && navigator.isChild ? 'keyboard-backspace' : 'menu'}
                 onIconPress={() => navigator && navigator.isChild ? navigator.back() : onIconPress()}
                 actions={[{
