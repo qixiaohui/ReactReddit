@@ -4,7 +4,7 @@ var iface = {
     name: 'FloatingActionButton',
     propTypes: {
         ...View.propTypes,
-        text: PropTypes.string,
+        theme: PropTypes.string,
     }
 }
 

@@ -3,6 +3,7 @@ import { Subheader, Icon, COLOR, Divider } from 'react-native-material-design';
 import Line from '../components/Line'
 import storage from '../storage/storage'
 import _ from 'underscore'
+import Events from 'react-native-simple-events';
 
 export default class Settings extends Component {
     static contextTypes = {
@@ -12,10 +13,24 @@ export default class Settings extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			configObj: null
+			configObj: null,
+			theme: 'googleGreen'
 		};
 		this.checkLogin();
+		this.checkTheme();
 	}
+
+    checkTheme = () => {
+        storage.queryStorage("THEME").then(
+        	(value) => {
+        		if(value){
+        			this.setState({
+        				theme: value
+        			});
+        		}
+        	}
+    	).done();
+    };
 
 	checkLogin = () => {
 		storage.queryStorage('COOKIE').then(
@@ -63,7 +78,7 @@ export default class Settings extends Component {
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>
-										<Icon color="googleGreen" name={setting.icon} />
+										<Icon color={this.state.theme} name={setting.icon} />
 									</View>
 									<View style={styles.options}>
 										<Text style={styles.optionText}>{setting.path}</Text>
@@ -73,7 +88,7 @@ export default class Settings extends Component {
 							</View>
 							</TouchableNativeFeedback>
 						);
-					})}
+					}.bind(this))}
 					<View>
 						<Subheader text="Preference" color="googleGreen"  />
 					</View>
@@ -83,7 +98,7 @@ export default class Settings extends Component {
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>
-										<Icon color="googleGreen" name={setting.icon} />
+										<Icon color={this.state.theme} name={setting.icon} />
 									</View>
 									<View style={styles.options}>
 										<Text style={styles.optionText}>{setting.path}</Text>
@@ -93,7 +108,7 @@ export default class Settings extends Component {
 							</View>
 							</TouchableNativeFeedback>
 						);
-					})}
+					}.bind(this))}
 				</View>          	
 			);
 		}else{

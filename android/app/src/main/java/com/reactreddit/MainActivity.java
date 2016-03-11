@@ -2,6 +2,7 @@ package com.reactreddit;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
@@ -60,5 +61,14 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
         if(mReactInstanceManager != null){
             mReactInstanceManager.onResume(this, this);
         }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU && mReactInstanceManager != null) {
+            mReactInstanceManager.showDevOptionsDialog();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 }

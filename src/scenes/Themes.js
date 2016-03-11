@@ -5,7 +5,7 @@ import Events from 'react-native-simple-events';
 
 export default class Themes extends Component {
     changeTheme = (color) => {
-        Events.trigger('CHANGE_THEME', {theme: color})
+        Events.trigger('CHANGE_THEME', {theme: color});
     };
 
     render() {
@@ -16,7 +16,7 @@ export default class Themes extends Component {
                 <View style={styles.container}>
                     {PRIMARY_COLORS.map((color) => {
                         return (
-                            <TouchableHighlight key={color} onPress={(color) => { this.changeTheme(color)}}>
+                            <TouchableHighlight key={color} onPress={() => { this.changeTheme(color)}}>
                                 <View  style={[styles.item, { backgroundColor: COLOR[`${color}500`].color }]}>
                                     <Text style={styles.text}>{color}</Text>
                                 </View>

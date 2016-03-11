@@ -1,6 +1,7 @@
 import React, { Component, PropTypes, Text, View } from 'react-native';
 import { Toolbar as MaterialToolbar } from 'react-native-material-design';
 import Events from 'react-native-simple-events';
+import storage from '../storage/storage'
 
 export default class Toolbar extends Component {
 
@@ -20,10 +21,14 @@ export default class Toolbar extends Component {
     }
 
     onChangeTheme = (data) => {
-        console.log("theme***"+data);
         this.setState({
             theme: data.theme
         });
+        this.setTheme(data.theme);
+    };
+
+    setTheme = (theme) => {
+        storage.setStorage("THEME", theme);
     };
 
     componentDidMount = () => {
@@ -37,7 +42,6 @@ export default class Toolbar extends Component {
     render() {
         const { navigator } = this.context;
         const { onIconPress } = this.props;
-		
         return (
             <MaterialToolbar
                 title={navigator && navigator.currentRoute ? navigator.currentRoute.title : 'Welcome'}

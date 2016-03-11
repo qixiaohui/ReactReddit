@@ -5,7 +5,11 @@ export default {
         return AsyncStorage.getItem(key);
     },
     setStorage: function(key, value){
-        AsyncStorage.setItem(key, JSON.stringify(value));
+    	if(typeof value !== 'string'){
+        	AsyncStorage.setItem(key, JSON.stringify(value));
+    	}else{
+    		AsyncStorage.setItem(key, value);
+    	}
     },
     removeStorage: function(key){
         AsyncStorage.removeItem(key);

@@ -14,6 +14,7 @@ export default class MainPage extends Component {
 	constructor(props) {
         super(props);
         this.state = {
+        	theme: COLOR[`googleGreen500`].color,
             uri: url.base+url.hot,
 			list: null,
 			before: null,
@@ -22,6 +23,11 @@ export default class MainPage extends Component {
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
+        this.checkPosts();
+        this.checkTheme();
+    }
+
+    checkPosts = () => {
         storage.queryStorage("POSTS").then(
             (value) => {
                 if(value){
@@ -33,7 +39,20 @@ export default class MainPage extends Component {
                 }
             }
         ).done();
-    }
+    };
+
+    checkTheme = () => {
+        storage.queryStorage("THEME").then(
+        	(value) => {
+        		if(value){
+        			this.setState({
+        				theme: value
+        			});
+        		}
+        	}
+    	).done();
+    };
+
 	fetchPosts = () => {
 		if(this.state.endReached){
 			return;
@@ -77,7 +96,7 @@ export default class MainPage extends Component {
 				  />
                 <TouchableHighlight style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
                     <View>
-                        <FloatingActionButton style = {styles.floatingButton} />
+                        <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
                     </View>
                 </TouchableHighlight>
 				</View>

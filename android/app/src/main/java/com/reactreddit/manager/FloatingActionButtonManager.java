@@ -1,8 +1,10 @@
 package com.reactreddit.manager;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.facebook.react.uimanager.ReactProp;
@@ -46,5 +48,10 @@ public class FloatingActionButtonManager extends SimpleViewManager<FloatingActio
         button.setImageTintList(ContextCompat.getColorStateList(button.getContext(), android.R.color.white));
         button.setScaleType(ImageView.ScaleType.CENTER);
         return button;
+    }
+
+    @ReactProp(name="theme")
+    public void setTheme(FloatingActionButton view, String theme){
+        view.setBackgroundColor(Color.parseColor(theme));
     }
 }
