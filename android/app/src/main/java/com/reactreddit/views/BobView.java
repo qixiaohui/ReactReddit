@@ -41,7 +41,8 @@ public class BobView extends LinearLayout implements View.OnFocusChangeListener{
 
         mContext = context;
         mBobView = new RelativeLayout(context);
-        this.addView(mBobView);
+        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        this.addView(mBobView, p);
         inflateBob(mContext);
     }
 

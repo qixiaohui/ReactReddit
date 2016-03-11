@@ -16,19 +16,15 @@ export default class BobViewList extends Component{
 	}
 
 	fetchData = () => {
-		var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
-		var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
-		var PAGE_SIZE = 25;
-		var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
-		var REQUEST_URL = API_URL + PARAMS;
-		fetch(REQUEST_URL)
+		fetch("http://10.143.28.63:3000/movies")
 		  .then((response) => response.json())
 		  .then((responseData) => {
-            this.setState({row: responseData.movies[0]});
+		  	console.log(JSON.stringify(responseData));
+            this.setState({row: responseData.boxOffice.movies[0]});
 //			this.setState({
 //				dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
 //			});		  	
-		  });
+		  }).done();
 	};
 
 	renderRow = (row) => {
@@ -64,7 +60,7 @@ export default class BobViewList extends Component{
             console.log("bobview"+BobView);
             console.log(<BobView />);
             return(<View style={{flex: 1}}>
-                   <BobView bobInfo={this.map} style={{width: 2000, height: 2000}}  />
+                   <BobView bobInfo={map} style={{width: 200, height: 200}}  />
             	</View>);
         }else{
         	return(<View></View>);

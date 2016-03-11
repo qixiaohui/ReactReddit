@@ -2,12 +2,13 @@ package com.reactreddit.manager;
 
 import android.media.Image;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.uimanager.ReactProp;
+import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.reactreddit.views.BobView;
@@ -25,12 +26,12 @@ public class BobViewManager extends SimpleViewManager<BobView>{
 
     @Override
     protected BobView createViewInstance(ThemedReactContext reactContext) {
+        Log.i("bobview", "render");
        return new BobView(reactContext);
     }
 
     @ReactProp(name="bobInfo")
-    public void setBobInfo(BobView view, ReadableMap bobInfo){
-        Log.i("set bob info", "!!!!");
+    public void setBobInfo(BobView view, @Nullable ReadableMap bobInfo){
         view.setInfo(bobInfo);
     }
 
