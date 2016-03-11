@@ -6,26 +6,71 @@ export default class BobViewList extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-//			dataSource: new ListView.DataSource({
-//			rowHasChanged: (row1, row2) => row1 !== row2,   
-//			}),
-            row: null
+			index: 0,
+			title: '',
+			focusDrawer: false,
+			dataSource: new ListView.DataSource({
+			rowHasChanged: (row1, row2) => row1['highlight'] !== row2['highlight'],   
+			}),
 		};
 
 		this.fetchData();
 	}
+
+    handleKey = (key) => {
+    	const { navigator } = this.context;
+        switch(key){
+            case "0":
+                break;
+            case "1":
+            	if(this.state.index>0 && !this.state.focusDrawer){
+            		this.state.index--;
+                    this.state.dataSource._dataBlob.s1[this.state.index].highlight = 
+                    this.state.index;
+                    this.state.title=this.state.dataSource._dataBlob.s1[this.state.index].title;
+                    this.forceUpdate();
+            	}
+                break;
+            case "2":
+            	this.setState({
+            		focusDrawer: false,
+            	});
+                break;
+            case "3":
+            	if(this.state.index<this.state.dataSource._dataBlob.s1.length &&
+            	 !this.state.focusDrawer){
+            		this.state.index++;
+                    console.log("==="+this.state.title);
+                    this.state.dataSource._dataBlob.s1[this.state.index].highlight = 
+                    this.state.index;
+                    this.state.title=this.state.dataSource._dataBlob.s1[this.state.index].title;
+                    this.forceUpdate();
+            	}
+                break;
+            case "4":
+            	this.setState({
+            		focusDrawer: true,
+            	});
+                break;       
+        }
+    };
 
 	fetchData = () => {
 		fetch("http://10.143.28.63:3000/movies")
 		  .then((response) => response.json())
 		  .then((responseData) => {
 		  	console.log(JSON.stringify(responseData));
-            this.setState({row: responseData.boxOffice.movies[0]});
-//			this.setState({
-//				dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
-//			});		  	
+			this.setState({
+				dataSource: this.state.dataSource.cloneWithRows(responseData.upcomming.movies),
+			});		  	
 		  }).done();
 	};
+
+    componentWillMount() {
+        DeviceEventEmitter.addListener('keyDown', function(e: Event){
+            this.handleKey(e.code);
+        }.bind(this));
+    }
 
 	renderRow = (row) => {
 		var map = {
@@ -33,34 +78,27 @@ export default class BobViewList extends Component{
 			title: row.title,
 			year: row.year,
 			rating: row.ratings.critics_score,
-			actor: row.abridged_cast[0].name 
+			actor: row.abridged_cast[0].name,
+			description: row.synopsis,
+            highlight: "",
 		};
-		console.log(JSON.stringify(map));
-		return(<View><BobView  bobInfo = {map} /></View>);
+
+		return(<TouchableNativeFeedback background={TouchableNativeFeedback.Ripple("#888888", false)}>
+			<View>
+			<BobView title={this.state.title} bobInfo={map}  style={{width: 300, height: 200}}/>
+			</View>
+			</TouchableNativeFeedback>);
 	};
 
 	render() {
-//			return (<View style={{flex: 1}}>
-//					<ListView
-//					dataSource={this.state.dataSource}
-//					renderRow={this.renderRow.bind(this)}
-//					style={styles.listView}
-//					 />
-//				</View>);
-		if(this.state.row){
-			console.log("*&&&&"+JSON.stringify(this.state.row));
-           var map = {
-               poster: this.state.row.posters.thumbnail,
-               title: this.state.row.title,
-               year: this.state.row.year,
-               rating: this.state.row.ratings.critics_score,
-               actor: this.state.row.abridged_cast[0].name 
-           };
-           console.log("%&&"+JSON.stringify(map));
-            console.log("bobview"+BobView);
-            console.log(<BobView />);
+		if(this.state.dataSource._dataBlob){
+            console.log("rerender");
             return(<View style={{flex: 1}}>
-                   <BobView bobInfo={map} style={{width: 200, height: 200}}  />
+   				  <ListView
+					dataSource={this.state.dataSource}
+					renderRow={this.renderRow.bind(this)}
+					style={styles.listView}
+				  />
             	</View>);
         }else{
         	return(<View></View>);
@@ -70,7 +108,7 @@ export default class BobViewList extends Component{
 var styles = StyleSheet.create({
   listView: {
     paddingTop: 5,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#343434',
   },
    floatingButton: {
       width: 56,

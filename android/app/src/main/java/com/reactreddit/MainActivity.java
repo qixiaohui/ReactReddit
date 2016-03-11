@@ -2,6 +2,7 @@ package com.reactreddit;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -67,7 +68,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         WritableNativeMap params = new WritableNativeMap();
         boolean handled = false;
         switch(keyCode){
@@ -84,6 +85,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 handled = true;
                 break;
             case KeyEvent.KEYCODE_DPAD_DOWN:
+                Log.i("dpad", "down");
                 params.putString("code", "3");
                 handled = true;
                 break;
@@ -95,11 +97,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
         if(handled) {
             mReactInstanceManager.getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("keyDown", params);
         }
-        return handled || super.onKeyDown(keyCode, event);
-    }
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU && mReactInstanceManager != null) {
             mReactInstanceManager.showDevOptionsDialog();
             return true;

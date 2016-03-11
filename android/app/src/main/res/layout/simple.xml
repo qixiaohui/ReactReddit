@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_alignParentLeft="true"
+        android:id="@+id/boxArt"
+        android:layout_width="235px"
+        android:layout_height="350px"
+        android:layout_marginTop="5px" />
+    <LinearLayout
+        android:layout_alignRight="@+id/boxArt"
+        android:id="@+id/bobDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:orientation="vertical"
+        android:layout_marginLeft="245px"
+        android:layout_alignParentEnd="true">
+
+        <TextView
+            android:id="@+id/bobTitle"
+            android:textColor="#ffffff"
+            android:layout_height="16dp"
+            android:layout_width="wrap_content"
+            android:text="wqeqw" />
+
+        <TextView
+            android:id="@+id/bobRating"
+            android:textColor="#ffffff"
+            android:layout_height="16dp"
+            android:layout_width="wrap_content"
+            android:text="rwer" />
+
+        <TextView
+            android:id="@+id/bobYear"
+            android:layout_height="16dp"
+            android:layout_width="wrap_content"
+            android:textColor="@color/twc_brand"
+            android:text="rwe" />
+
+        <TextView
+            android:id="@+id/bobActors"
+            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:textColor="#8b8d8e"
+            android:text="sf" />
+
+        <TextView
+            android:id="@+id/bobDescription"
+            android:layout_height="100dp"
+            android:layout_width="wrap_content"
+            android:textColor="#8b8d8e"
+            android:text="fds"/>
+    </LinearLayout>
+</RelativeLayout>

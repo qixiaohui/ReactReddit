@@ -5,7 +5,10 @@ package com.reactreddit.views;
  */
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +17,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.react.bridge.ReadableMap;
-import com.reactreddit.R;
 import com.squareup.picasso.Picasso;
+import com.reactreddit.*;
+
+import java.io.InputStream;
+import java.net.URL;
 
 public class BobView extends LinearLayout implements View.OnFocusChangeListener{
-
-    private LayoutInflater mLayoutInflator;
 
     private RelativeLayout mBobView;
     private Context mContext;
@@ -32,18 +37,32 @@ public class BobView extends LinearLayout implements View.OnFocusChangeListener{
     private TextView mYear;
     private TextView mActors;
     private TextView mDescription;
-    private RelativeLayout.LayoutParams p;
     private ViewGroup mDetail;
     private Boolean hasFocus = false;
+    private LayoutInflater mLayoutInflator;
+    private LinearLayout.LayoutParams p;
+    private ReadableMap mReadableMap;
+    private LinearLayout linear;
 
     public BobView(Context context) {
         super(context);
-
         mContext = context;
-        mBobView = new RelativeLayout(context);
-        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        inflateBob(context);
+        p = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         this.addView(mBobView, p);
-        inflateBob(mContext);
+    }
+
+    private void setListener(){
+        mBobView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setFocus(hasFocus);
+            }
+        });
+    }
+
+    private void setFocus(Boolean focus){
+        this.hasFocus = focus;
     }
 
     /**
@@ -51,68 +70,43 @@ public class BobView extends LinearLayout implements View.OnFocusChangeListener{
      * @return
      */
     private void inflateBob (Context context) {
-        mBobView.setId(R.id.bobView);
+        mLayoutInflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        mBobView = (RelativeLayout)mLayoutInflator.inflate(R.layout.simple, null);
+        Log.i("inflate relative", mBobView.toString());
 
-        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mBoxArt = new ImageView(mContext);
-        mBoxArt.setId(R.id.imageArt);
-        p.addRule(RelativeLayout.ALIGN_PARENT_LEFT, mBobView.getId());
-        mBobView.addView(mBoxArt, p);
+        linear = (LinearLayout) mBobView.findViewById(R.id.bobDetails);
+        mBoxArt = (ImageView) mBobView.findViewById(R.id.boxArt);
+        mTitle = (TextView) mBobView.findViewById(R.id.bobTitle);
+        mRating = (TextView) mBobView.findViewById(R.id.bobRating);
+        mYear = (TextView) mBobView.findViewById(R.id.bobYear);
+        mActors = (TextView) mBobView.findViewById(R.id.bobActors);
+        mDescription = (TextView) mBobView.findViewById(R.id.bobDescription);
+    }
 
-        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mTitle = new TextView(mContext);
-        mTitle.setId(R.id.title);
-        p.addRule(RelativeLayout.ALIGN_RIGHT, mBoxArt.getId());
-        p.addRule(RelativeLayout.ALIGN_PARENT_TOP, mBobView.getId());
-        mBobView.addView(mTitle, p);
-
-        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mYear = new TextView(mContext);
-        mYear.setId(R.id.year);
-        p.addRule(RelativeLayout.ALIGN_RIGHT, mBoxArt.getId());
-        p.addRule(RelativeLayout.ALIGN_BOTTOM, mTitle.getId());
-        mBobView.addView(mYear, p);
-
-        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mRating = new TextView(mContext);
-        mRating.setId(R.id.rating);
-        p.addRule(RelativeLayout.ALIGN_RIGHT, mBoxArt.getId());
-        p.addRule(RelativeLayout.ALIGN_BOTTOM, mYear.getId());
-        mBobView.addView(mRating, p);
-
-        p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mActors = new TextView(mContext);
-        mActors.setId(R.id.actor);
-        p.addRule(RelativeLayout.ALIGN_RIGHT, mBoxArt.getId());
-        p.addRule(RelativeLayout.ALIGN_BOTTOM, mActors.getId());
-        mBobView.addView(mActors, p);
-
-        Log.i("info", "*****&&&&");
-
-//        mLayoutInflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-//        mBobView = mLayoutInflator.inflate(R.layout.bob, null);
-//
-//        mDetail = (ViewGroup) mBobView.findViewById(R.id.bobDetails);
-//
-//        mBoxArt = (ImageView) mBobView.findViewById(R.id.boxArt);
-//        mTitle = (TextView) mBobView.findViewById(R.id.bobTitle);
-//        mRating = (TextView) mBobView.findViewById(R.id.bobRating);
-//        mYear = (TextView) mBobView.findViewById(R.id.bobYear);
-//        mActors = (TextView) mBobView.findViewById(R.id.bobActors);
-//        mDescription = (TextView) mBobView.findViewById(R.id.bobDescription);
+    public RelativeLayout getmBobView(){
+        return mBobView;
     }
 
     public void setInfo(ReadableMap map){
-        System.out.println("POSTER$$$$"+map.getString("poster"));
-        Picasso.with(mContext)
-                .load(Uri.parse(map.getString("poster")))
-                .resize(50, 50)
-                .centerCrop()
-                .into(mBoxArt);
+        mReadableMap = map;
+        if(map.getString("poster").indexOf("/movie")>0){
+            String url = "http://content6.flixster.com" + map.getString("poster").substring(map.getString("poster").lastIndexOf("/movie"), map.getString("poster").length());
+            Picasso.with(mContext).load(url).into(mBoxArt);
+        }else{
+            mBoxArt.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.deadpool));
+        }
+
+        //mBoxArt.setImageURI(Uri.parse(map.getString("poster")));
         mTitle.setText(map.getString("title"));
         mYear.setText(Integer.toString(map.getInt("year")));
         mActors.setText(map.getString("actor"));
         mRating.setText(Integer.toString(map.getInt("rating")));
+        mDescription.setText(map.getString("description"));
+
+    }
+
+    public void setHighlight(String title){
+
     }
 
     /**
@@ -205,18 +199,18 @@ public class BobView extends LinearLayout implements View.OnFocusChangeListener{
         return mDescription;
     }
 
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        this.hasFocus = hasFocus;
+        Toast.makeText(mContext, "focused", Toast.LENGTH_LONG).show();
+    }
+
     /**
      *
      * @return
      */
     public View getView () {
         return mBobView;
-    }
-
-
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        this.hasFocus = hasFocus;
     }
 
     public Boolean checkFocus(){

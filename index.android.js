@@ -22,6 +22,7 @@ class ReactReddit extends Component {
 	}
 
     handleKey = (key) => {
+    	console.log("keydown");
         switch(key){
             case "0":
                 break;
