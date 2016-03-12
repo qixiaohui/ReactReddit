@@ -25,8 +25,8 @@ export default class MainPage extends Component {
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
-        this.checkPosts();
         this.checkTheme();
+        this.checkPosts();
     }
 
     checkPosts = () => {
@@ -111,13 +111,10 @@ export default class MainPage extends Component {
 	};
 
 	render() {
-<<<<<<< HEAD
-		toast.showToast(this.state.theme, 3000);
-=======
->>>>>>> e858dd39562a334ab70956ab3ea2022f6e9eecf0
 		if(this.state.dataSource._dataBlob){
 			return (
-				<PTRView onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={'#ffff00'}>
+				<View style={{flex: 1}}>
+				<PTRView onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
 					<View style={{flex: 1}}>
 					  <ListView
 						dataSource={this.state.dataSource}
@@ -125,13 +122,14 @@ export default class MainPage extends Component {
 						style={styles.listView}
 						onEndReached={this.fetchPosts}
 					  />
-	                <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
-	                    <View>
-	                        <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
-	                    </View>
-	                </TouchableHighlight>
 					</View>
 				</PTRView>
+                <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
+                    <View>
+                        <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
+                    </View>
+                </TouchableHighlight>
+				</View>
 			);
 		} else {
 			return (

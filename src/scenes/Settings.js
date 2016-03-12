@@ -16,8 +16,8 @@ export default class Settings extends Component {
 			configObj: null,
 			theme: 'googleGreen'
 		};
-		this.checkLogin();
 		this.checkTheme();
+		this.checkLogin();
 	}
 
     checkTheme = () => {
