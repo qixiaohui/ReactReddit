@@ -5,6 +5,10 @@ import url from '../http/url'
 import storage from '../storage/storage'
 
 export default class Login extends Component{
+    static contextTypes = {
+        navigator: React.PropTypes.object.isRequired,
+    };
+
     constructor(props){
         super(props);
         this.state = {
@@ -15,7 +19,7 @@ export default class Login extends Component{
     }
     
     onLogin = () => {
-		
+		const { navigator } = this.context;
         this.fetchLogin()
 			.then((response) => {
 				if(response.status === 200){
@@ -29,6 +33,8 @@ export default class Login extends Component{
 					toast.showToast("login failed", 3000);
 				}else{
 					storage.setStorage("COOKIE", responseData.json.data);
+					toast.showToast("login success", 3000);
+					navigator.to("mainpage");
 				}
 			})
 			.done();
