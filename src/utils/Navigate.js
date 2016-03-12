@@ -20,12 +20,12 @@ export default class Navigate {
 			rou
 			tes = customRoutes;
 		}
-		console.log(routes);
+
 		if (!routes) {
 			console.warn(`[Navigate.getInitialRoute()] No routes found. Add routes to src/routes.js.`);
 			return null;
 		}
-		console.log("Im here");
+
 		if (path) {
 			return {
 				path,

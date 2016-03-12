@@ -1,5 +1,6 @@
-import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
+import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image} from 'react-native';
 import { Card, Button, COLOR, TYPO, Icon, List } from 'react-native-material-design';
+import PTRView from 'react-native-pull-to-refresh';
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
@@ -19,6 +20,7 @@ export default class MainPage extends Component {
 			list: null,
 			before: null,
 			endReached: false,
+			refreshing: false,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
@@ -53,7 +55,7 @@ export default class MainPage extends Component {
     	).done();
     };
 
-	fetchPosts = () => {
+	fetchPosts = (resolve) => {
 		if(this.state.endReached){
 			return;
 		}
@@ -75,31 +77,61 @@ export default class MainPage extends Component {
 				responseData.data.children =
 					this.state.dataSource._dataBlob.s1.concat(responseData.data.children);
 			}
+
 			this.setState({
 				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
 				before: responseData.data.after,
+				refreshing: false,
 			});
             storage.setStorage( "POSTS", this.state.dataSource);
+            //resolve drag promise
+            if(typeof resolve === 'function'){
+            	resolve();
+            }
 		  })
 		  .done();
 	};
+
+	onRefresh = () => {
+		if(!this.state.refreshing){
+			this.setState({
+				refreshing: true,
+				endReached: false,
+				before: null,
+				uri: url.base+url.hot,
+			});
+			return new Promise((resolve) => {
+				this.fetchPosts(resolve);
+			});
+		} else {
+			return new Promise((resolve) => {
+				resolve();
+			});
+		}
+	};
+
 	render() {
+<<<<<<< HEAD
 		toast.showToast(this.state.theme, 3000);
+=======
+>>>>>>> e858dd39562a334ab70956ab3ea2022f6e9eecf0
 		if(this.state.dataSource._dataBlob){
 			return (
-				<View style={{flex: 1}}>
-				  <ListView
-					dataSource={this.state.dataSource}
-					renderRow={this.renderRow.bind(this)}
-					style={styles.listView}
-					onEndReached={this.fetchPosts}
-				  />
-                <TouchableHighlight style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
-                    <View>
-                        <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
-                    </View>
-                </TouchableHighlight>
-				</View>
+				<PTRView onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={'#ffff00'}>
+					<View style={{flex: 1}}>
+					  <ListView
+						dataSource={this.state.dataSource}
+						renderRow={this.renderRow.bind(this)}
+						style={styles.listView}
+						onEndReached={this.fetchPosts}
+					  />
+	                <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
+	                    <View>
+	                        <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
+	                    </View>
+	                </TouchableHighlight>
+					</View>
+				</PTRView>
 			);
 		} else {
 			return (
@@ -117,7 +149,7 @@ export default class MainPage extends Component {
 				<View>
 					<Line></Line>
 					<Card>
-                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
                         <View>
                             <Card.Media
                                 image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
