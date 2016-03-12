@@ -18,7 +18,20 @@ export default class Toolbar extends Component {
         this.state = {
             theme: 'googleGreen',
         };
+        this.checkTheme();
     }
+
+    checkTheme = () => {
+        storage.queryStorage("THEME").then(
+            (value) => {
+                if(value){
+                    this.setState({
+                        theme: value
+                    });
+                }
+            }
+        ).done();
+    };
 
     onChangeTheme = (data) => {
         this.setState({

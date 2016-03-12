@@ -14,7 +14,7 @@ export default class MainPage extends Component {
 	constructor(props) {
         super(props);
         this.state = {
-        	theme: COLOR[`googleGreen500`].color,
+        	theme: COLOR[`googleBlue500`].color,
             uri: url.base+url.hot,
 			list: null,
 			before: null,
@@ -46,7 +46,7 @@ export default class MainPage extends Component {
         	(value) => {
         		if(value){
         			this.setState({
-        				theme: value
+        				theme: COLOR[`${value}500`].color
         			});
         		}
         	}
@@ -84,7 +84,7 @@ export default class MainPage extends Component {
 		  .done();
 	};
 	render() {
-		console.log(Button+"&&"+List);
+		toast.showToast(this.state.theme, 3000);
 		if(this.state.dataSource._dataBlob){
 			return (
 				<View style={{flex: 1}}>
@@ -139,7 +139,7 @@ export default class MainPage extends Component {
 							</TouchableHighlight>
 						</Card.Body>
 						<Card.Actions position="right">
-							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
+							<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
 						</Card.Actions>
 					</Card>
 				</View>				
@@ -160,7 +160,7 @@ export default class MainPage extends Component {
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</TouchableHighlight>
 						<Card.Actions position="right">
-							<Button value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
+							<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
 						</Card.Actions>
 						</View>
 					  </View>

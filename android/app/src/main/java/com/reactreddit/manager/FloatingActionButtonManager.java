@@ -1,9 +1,11 @@
 package com.reactreddit.manager;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -17,12 +19,6 @@ import com.facebook.react.views.image.ReactImageView;
  * Created by TQi on 3/2/16.
  */
 public class FloatingActionButtonManager extends SimpleViewManager<FloatingActionButton> {
-
-    @ReactProp(name = "PropTextInput")
-    public void setText(ReactImageView view, @Nullable String PropTextInput){
-        return;
-    }
-    public static final String PropTextInput = "text";
 
     public static final String REACT_CLASS = "FloatingActionButton";
 
@@ -52,6 +48,8 @@ public class FloatingActionButtonManager extends SimpleViewManager<FloatingActio
 
     @ReactProp(name="theme")
     public void setTheme(FloatingActionButton view, String theme){
-        view.setBackgroundColor(Color.parseColor(theme));
+        Log.i("theme", theme);
+        view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(theme)));
+        //view.setBackgroundColor(Color.parseColor(theme));
     }
 }
