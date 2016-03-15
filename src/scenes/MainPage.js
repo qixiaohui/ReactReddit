@@ -9,6 +9,7 @@ import FloatingActionButton from '../components/FloatingActionButton'
 import toast from '../modules/Toast'
 import storage from '../storage/storage'
 import Dimensions from 'Dimensions'
+import TextField from 'react-native-md-textinput'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -144,12 +145,13 @@ export default class MainPage extends Component {
 					</View>
 				</PTRView>
 		        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
-		        <View >
-		        	<Subheader text="Title" color={this.state.theme}  />
-		        	<View style={styles.textRow}>
-		        		<TextInput style={styles.text} />
-		        	</View>
-		        </View>
+		        <ScrollView >
+		        	<TextField label={'title'} highlightColor={this.state.theme} />
+		        	<TextField label={'url'} highlightColor={this.state.theme} />
+		        	<TextField label={'subreddit'} highlightColor={this.state.theme} />
+		        	<Button text={"Submit"} primary={this.state.theme} />
+		        	<Button text={"Cancel"} primary={"#f80054"} onPress={()=>{this.refs.modal.close()}} />
+		        </ScrollView>
 		        </Modal>
                 <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
                     <View>
