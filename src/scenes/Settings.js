@@ -3,7 +3,7 @@ import { Subheader, Icon, COLOR, Divider } from 'react-native-material-design';
 import Line from '../components/Line'
 import storage from '../storage/storage'
 import _ from 'underscore'
-import Events from 'react-native-simple-events';
+import Events from 'react-native-simple-events'
 
 export default class Settings extends Component {
     static contextTypes = {

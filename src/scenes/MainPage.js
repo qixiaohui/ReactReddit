@@ -19,6 +19,7 @@ export default class MainPage extends Component {
         super(props);
         this.state = {
         	theme: COLOR[`googleBlue500`].color,
+        	primary: 'googleBlue',
             uri: url.base+url.hot,
 			list: null,
 			before: null,
@@ -57,6 +58,7 @@ export default class MainPage extends Component {
         	(value) => {
         		if(value){
         			this.setState({
+        				primary: value,
         				theme: COLOR[`${value}500`].color
         			});
         		}
@@ -146,11 +148,11 @@ export default class MainPage extends Component {
 				</PTRView>
 		        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
 		        <ScrollView >
-		        	<TextField label={'title'} highlightColor={this.state.theme} />
-		        	<TextField label={'url'} highlightColor={this.state.theme} />
-		        	<TextField label={'subreddit'} highlightColor={this.state.theme} />
-		        	<Button text={"Submit"} primary={this.state.theme} />
-		        	<Button text={"Cancel"} primary={"#f80054"} onPress={()=>{this.refs.modal.close()}} />
+		        	<TextField dense={true} label={'title'} highlightColor={this.state.theme} />
+		        	<TextField dense={true} label={'url'} highlightColor={this.state.theme} />
+		        	<TextField dense={true} label={'subreddit'} highlightColor={this.state.theme} />
+		        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
+		        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
 		        </ScrollView>
 		        </Modal>
                 <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>

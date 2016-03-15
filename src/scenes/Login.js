@@ -3,6 +3,7 @@ import {Checkbox, Button, COLOR, TYPO } from 'react-native-material-design';
 import toast from '../modules/Toast'
 import url from '../http/url'
 import storage from '../storage/storage'
+import TextField from 'react-native-md-textinput'
 
 export default class Login extends Component{
     static contextTypes = {
@@ -60,20 +61,8 @@ export default class Login extends Component{
     render()  {
         return(
 			<ScrollView>
-				<View style={styles.container}>
-					<View style={styles.rowContainer}>
-						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Username:</Text>
-						<View style={styles.textInput}>
-							<TextInput onChangeText={(text) => this.setState({userName: text})} value = {this.state.userName} />
-						</View>
-					</View>
-					<View style={styles.rowContainer}> 
-						<Text style = {[styles.text, COLOR.paperBlueGrey]}>Password:</Text>
-						<View style={styles.textInput}>
-							<TextInput secureTextEntry={this.state.mask} onChangeText = {(text) => this.setState({passWord: text})} value = {this.state.passWord} />
-						</View>
-					</View>
-				</View>
+				<TextField dense={true} label={'UserName'} highlightColor={this.state.theme} onChangeText={(text) => this.setState({userName: text})} />
+				<TextField dense={true} label={'Password'} secureTextEntry={this.state.mask} highlightColor={this.state.theme} onChangeText={(text) => this.setState({passWord: text})} />
 				<View style={{marginLeft: 30}}>
 					<Checkbox checked={(!this.state.mask)} onCheck={()=>{this.setState({mask: !this.state.mask})}} primary={'googleGreen'} label="show password" />
 				</View>
@@ -94,18 +83,10 @@ var styles = StyleSheet.create({
 		marginLeft: 50,
 		marginRight: 50,
     },
-    rowContainer: {
-        flex: 1,
-        flexDirection: 'column'
-    },
     text: {
         textAlign: 'center',
         fontWeight: 'bold',
         fontSize: 19,
         flex: 1,
     },
-    textInput: {
-        flex: 2,
-		borderColor: 'grey',
-    }
 });
