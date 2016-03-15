@@ -10,6 +10,7 @@ import toast from '../modules/Toast'
 import storage from '../storage/storage'
 import Dimensions from 'Dimensions'
 import TextField from 'react-native-md-textinput'
+import ActionButton from 'react-native-action-button'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -18,8 +19,8 @@ export default class MainPage extends Component {
 	constructor(props) {
         super(props);
         this.state = {
-        	theme: COLOR[`googleBlue500`].color,
-        	primary: 'googleBlue',
+        	theme: COLOR[`googleGreen500`].color,
+        	primary: 'googleGreen',
             uri: url.base+url.hot,
 			list: null,
 			before: null,
@@ -27,6 +28,9 @@ export default class MainPage extends Component {
 			refreshing: false,
 			swipeToClose: true,
 			selectedTab: 'link',
+			postType: null,
+			modhash: null,
+			submit: {title: null, url: null, sr: null, text: null},
 			width: Dimensions.get('window').width/2,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
@@ -121,15 +125,67 @@ export default class MainPage extends Component {
 		}
 	};
 
-	checkAccount = () => {
+	checkAccount = (type) => {
 		storage.queryStorage('COOKIE').then(
 			(value) => {
 				if(value){
+					if(type === 'post'){
+						this.setState({
+							postType: 'post',
+						});
+					}else if(type === 'url'){
+						this.setState({
+							postType: 'url',
+						});
+					}
+					this.setState({
+						modhash: JSON.parse(value).json.data.modhash,
+					});
 					this.refs.modal.open();
 				} else {
 					toast.showToast("Please login first", 3000);
 				}
 		}).done();
+	};
+
+	submitPost = () => {
+        var obj = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': "application/json",
+            }
+        }; 
+		if(this.state.postType === 'post'){
+			// ** normal json stringify body doesnt work 
+			obj.body = "title="+this.state.submit.title+
+				"&text="+this.state.submit.text+
+				"&sr="+this.state.submit.sr+
+				"&kind=self"+
+				"&uh="+this.state.modhash;	
+        }else if(this.state.postType === 'url'){
+			// ** normal json stringify body doesnt work 
+			obj.body = "title="+this.state.submit.title+
+				"&url="+this.state.submit.url+
+				"&sr="+this.state.submit.sr+
+				"&kind=link"+
+				"&uh="+this.state.modhash;
+        }	
+
+        fetch(url.submit, obj)
+        	.then((response) => response.json())
+		    .then((responseData) => {
+		    	if(responseData.jquery[0][3] === 'refresh'){
+		    		toast.showToast("wrong crednetial", 3000);
+		    	}else if(responseData.jquery[18][3][0] === '.error.RATELIMIT.field-ratelimit'){
+					toast.showToast("rate limit", 3000);
+		    	}else if(responseData.jquery[18][3][0] === '.error.BAD_CAPTCHA.field-captcha'){
+		    		toast.showToast("not enough karma", 3000);
+		    	}else{
+		    		toast.showToast("submit success", 3000);
+		    	}
+		    	this.refs.modal.close();
+		    }).done();
 	};
 
 	render() {
@@ -148,18 +204,28 @@ export default class MainPage extends Component {
 				</PTRView>
 		        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
 		        <ScrollView >
-		        	<TextField dense={true} label={'title'} highlightColor={this.state.theme} />
-		        	<TextField dense={true} label={'url'} highlightColor={this.state.theme} />
-		        	<TextField dense={true} label={'subreddit'} highlightColor={this.state.theme} />
+		        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({submit: {title: text}})} highlightColor={this.state.theme} />
+		        	{(() => {
+		        		if(this.state.postType === 'post'){
+			        			return(<TextField dense={true} label={'text'} multiline={true} onChangeText={(text) => this.setState({submit: {text: text}})} numberOfLines={4} highlightColor={this.state.theme} />);
+			        		}else if(this.state.postType === 'url'){
+			        			return(<TextField dense={true} label={'url'} onChangeText={(text) => this.setState({submit: {url: text}})} highlightColor={this.state.theme} />);
+			        		}
+	        			})()
+		        	}
+		        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({submit: {sr: text}})} highlightColor={this.state.theme} />
 		        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
 		        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
 		        </ScrollView>
 		        </Modal>
-                <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
-                    <View>
-                        <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
-                    </View>
-                </TouchableHighlight>
+	         	<ActionButton buttonColor={this.state.theme} position={'right'}>
+	          		<ActionButton.Item buttonColor={COLOR[`googleGreen500`].color} title="Submit new post" onPress={() => {this.checkAccount('post')}}>
+	            		<Icon name={'share'} style = {styles.actionButtonIcon} />
+	          		</ActionButton.Item>
+            		<ActionButton.Item buttonColor={COLOR[`googleBlue500`].color} title="Submit new url" onPress={() => {this.checkAccount('url')}}>
+	            		<Icon name={'domain'} style = {styles.actionButtonIcon} />
+	          		</ActionButton.Item>
+	        	</ActionButton>
 				</View>
 			);
 		} else {
@@ -276,15 +342,6 @@ var styles = StyleSheet.create({
     paddingTop: 5,
     backgroundColor: '#F5FCFF',
   },
-  fabContainer: {
-      position: 'absolute',
-      bottom: 25,
-      right: 25,     
-  },
-  floatingButton: {
-      width: 56,
-      height: 56, 
-  },
   spinner: {
 	  width: 60,
 	  height: 60,
@@ -306,5 +363,10 @@ var styles = StyleSheet.create({
   	marginLeft: 20,
   	marginRight: 20,
   	backgroundColor: '#ffffff'
-  }
+  },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
 });

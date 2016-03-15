@@ -66,7 +66,7 @@ export default class Login extends Component{
 				<View style={{marginLeft: 30}}>
 					<Checkbox checked={(!this.state.mask)} onCheck={()=>{this.setState({mask: !this.state.mask})}} primary={'googleGreen'} label="show password" />
 				</View>
-				<View style={{marginLeft: 40, marginRight: 40}}>
+				<View>
 					<Button text="Login" primary={'googleGreen'} onPress={this.onLogin} theme="dark" raised={true}/>
 				</View>
 		   </ScrollView>
