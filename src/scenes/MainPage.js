@@ -1,12 +1,14 @@
-import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image} from 'react-native';
-import { Card, Button, COLOR, TYPO, Icon, List } from 'react-native-material-design';
-import PTRView from 'react-native-pull-to-refresh';
+import React, { Component, StyleSheet, ListView, TextInput, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image, Slider, PanResponder, ScrollView} from 'react-native';
+import { Card, Button, COLOR, TYPO, Icon, List, Subheader } from 'react-native-material-design';
+import Modal from 'react-native-modalbox'
+import PTRView from 'react-native-pull-to-refresh'
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
 import FloatingActionButton from '../components/FloatingActionButton'
 import toast from '../modules/Toast'
 import storage from '../storage/storage'
+import Dimensions from 'Dimensions'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -21,12 +23,18 @@ export default class MainPage extends Component {
 			before: null,
 			endReached: false,
 			refreshing: false,
+			swipeToClose: true,
+			selectedTab: 'link',
+			width: Dimensions.get('window').width/2,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
         this.checkTheme();
         this.checkPosts();
+    }
+
+    componentWillMount() {
     }
 
     checkPosts = () => {
@@ -110,6 +118,17 @@ export default class MainPage extends Component {
 		}
 	};
 
+	checkAccount = () => {
+		storage.queryStorage('COOKIE').then(
+			(value) => {
+				if(value){
+					this.refs.modal.open();
+				} else {
+					toast.showToast("Please login first", 3000);
+				}
+		}).done();
+	};
+
 	render() {
 		if(this.state.dataSource._dataBlob){
 			return (
@@ -124,7 +143,15 @@ export default class MainPage extends Component {
 					  />
 					</View>
 				</PTRView>
-                <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{toast.showToast("Please login first", 2000)}}>
+		        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
+		        <View >
+		        	<Subheader text="Title" color={this.state.theme}  />
+		        	<View style={styles.textRow}>
+		        		<TextInput style={styles.text} />
+		        	</View>
+		        </View>
+		        </Modal>
+                <TouchableHighlight background={TouchableNativeFeedback.SelectableBackground()} style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
                     <View>
                         <FloatingActionButton theme={this.state.theme} style = {styles.floatingButton} />
                     </View>
@@ -258,4 +285,22 @@ var styles = StyleSheet.create({
 	  width: 60,
 	  height: 60,
   },
+   modalContainer: {
+   	position: 'absolute',
+   	top: 0,
+   	left: 0,
+   	bottom: 0,
+   	right: 0,
+  },
+  textRow: {
+  	borderTopWidth: 1,
+  	borderBottomWidth: 1,
+  	borderColor: 'grey',
+  	backgroundColor: '#cee3f8',
+  },
+  text: {
+  	marginLeft: 20,
+  	marginRight: 20,
+  	backgroundColor: '#ffffff'
+  }
 });
