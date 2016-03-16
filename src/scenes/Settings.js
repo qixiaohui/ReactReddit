@@ -3,6 +3,7 @@ import { Subheader, Icon, COLOR, Divider } from 'react-native-material-design';
 import Line from '../components/Line'
 import storage from '../storage/storage'
 import _ from 'underscore'
+import toast from '../modules/Toast'
 import Events from 'react-native-simple-events'
 import SimpleAlert from 'react-native-simpledialog-android'
 
@@ -66,35 +67,36 @@ export default class Settings extends Component {
 	};
 
 	logout = () => {
-		// var clearCookie = function(){
-		// 	storage.removeStorage('COOKIE');
-		// }
+		var clearCookie = function(){
+			storage.removeStorage('COOKIE');
+		};
 
-		// var refreshView = function(){
-		// 	this.setState({
-		// 		configObj: {
-		// 			accountSetting: [
-		// 				{path: 'login', icon: 'account-circle'},
-		// 			],
-		// 			preference: [
-		// 				{path: 'theme',icon: 'adb'}
-		// 			]
-		// 		}
-		// 	});
-		// }.bind(this)
+		var refreshView = function(){
+			this.setState({
+				configObj: {
+					accountSetting: [
+						{path: 'login', icon: 'account-circle'},
+					],
+					preference: [
+						{path: 'theme',icon: 'adb'}
+					]
+				}
+			});
+		}.bind(this);
 
 		var _onPress = function(){
-			// clearCookie();
-			// refreshView();
-		}
+			 clearCookie();
+			 refreshView();
+		};
 
 		SimpleAlert.alert(
 		    'Please read me!',
 		    'Want a warning alert?', [
-		      { type: SimpleAlert.POSITIVE_BUTTON, text: 'Yes', onPress: _onPress()},
+		      { type: SimpleAlert.POSITIVE_BUTTON, text: 'Yes', onPress: _onPress},
 		      { type: SimpleAlert.NEGATIVE_BUTTON, text: 'No' },
 		    ]
 		);
+
 	};
 
 	render(){
@@ -107,7 +109,8 @@ export default class Settings extends Component {
 					</View>
 					{_.map(this.state.configObj.accountSetting, function(setting) {
 						return(
-							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{if(setting.func){this[setting.func]();}else{navigator.forward(setting.path, null, null)}}}>
+							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{if(setting.func){this[setting.func]();
+							}else{navigator.forward(setting.path, null, null)}}}>
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>
