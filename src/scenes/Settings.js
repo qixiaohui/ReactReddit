@@ -4,6 +4,7 @@ import Line from '../components/Line'
 import storage from '../storage/storage'
 import _ from 'underscore'
 import Events from 'react-native-simple-events'
+import SimpleAlert from 'react-native-simpledialog-android'
 
 export default class Settings extends Component {
     static contextTypes = {
@@ -39,7 +40,7 @@ export default class Settings extends Component {
 					this.setState({
 						configObj: {
 							accountSetting: [
-								{path: 'logout', icon: 'lock-open'},
+								{path: 'logout', icon: 'lock-open', func: 'logout'},
 								{path: 'friends', icon: 'people'},
 								{path: 'block', icon: 'delete'},
 								{path: 'password', icon: 'lock'}
@@ -64,6 +65,38 @@ export default class Settings extends Component {
 		}).done();
 	};
 
+	logout = () => {
+		// var clearCookie = function(){
+		// 	storage.removeStorage('COOKIE');
+		// }
+
+		// var refreshView = function(){
+		// 	this.setState({
+		// 		configObj: {
+		// 			accountSetting: [
+		// 				{path: 'login', icon: 'account-circle'},
+		// 			],
+		// 			preference: [
+		// 				{path: 'theme',icon: 'adb'}
+		// 			]
+		// 		}
+		// 	});
+		// }.bind(this)
+
+		var _onPress = function(){
+			// clearCookie();
+			// refreshView();
+		}
+
+		SimpleAlert.alert(
+		    'Please read me!',
+		    'Want a warning alert?', [
+		      { type: SimpleAlert.POSITIVE_BUTTON, text: 'Yes', onPress: _onPress()},
+		      { type: SimpleAlert.NEGATIVE_BUTTON, text: 'No' },
+		    ]
+		);
+	};
+
 	render(){
 		const { navigator } = this.context;
 		if(this.state.configObj){
@@ -74,7 +107,7 @@ export default class Settings extends Component {
 					</View>
 					{_.map(this.state.configObj.accountSetting, function(setting) {
 						return(
-							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward(setting.path, null, null)}}>
+							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{if(setting.func){this[setting.func]();}else{navigator.forward(setting.path, null, null)}}}>
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>
