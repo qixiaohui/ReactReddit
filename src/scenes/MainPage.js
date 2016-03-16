@@ -43,6 +43,22 @@ export default class MainPage extends Component {
     componentWillMount() {
     }
 
+    componentDidMount() {
+    	this.checkLogin();
+    }
+
+    checkLogin = () => {
+    	storage.queryStorage("COOKIE").then(
+    		(value) => {
+    			if(value){
+    				this.setState({
+    					modhash: JSON.parse(value).modhash,
+    				});
+    			}
+    		}
+		).done();
+    };
+
     checkPosts = () => {
         storage.queryStorage("POSTS").then(
             (value) => {
@@ -126,26 +142,20 @@ export default class MainPage extends Component {
 	};
 
 	checkAccount = (type) => {
-		storage.queryStorage('COOKIE').then(
-			(value) => {
-				if(value){
-					if(type === 'post'){
-						this.setState({
-							postType: 'post',
-						});
-					}else if(type === 'url'){
-						this.setState({
-							postType: 'url',
-						});
-					}
-					this.setState({
-						modhash: JSON.parse(value).json.data.modhash,
-					});
-					this.refs.modal.open();
-				} else {
-					toast.showToast("Please login first", 3000);
-				}
-		}).done();
+		if(this.state.modhash){
+			this.refs.modal.open();
+			if(type === 'post'){
+				this.setState({
+					postType: 'post',
+				});
+			}else if(type === 'url'){
+				this.setState({
+					postType: 'url',
+				});
+			}
+		}else{
+			toast.showToast("Please login first", 3000);
+		}
 	};
 
 	submitPost = () => {
@@ -218,7 +228,7 @@ export default class MainPage extends Component {
 		        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
 		        </ScrollView>
 		        </Modal>
-	         	<ActionButton buttonColor={this.state.theme} position={'right'}>
+	         	<ActionButton bgColor={'transparent'} buttonColor={this.state.theme} position={'right'}>
 	          		<ActionButton.Item buttonColor={COLOR[`googleGreen500`].color} title="Submit new post" onPress={() => {this.checkAccount('post')}}>
 	            		<Icon name={'share'} style = {styles.actionButtonIcon} />
 	          		</ActionButton.Item>

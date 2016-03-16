@@ -1,17 +1,34 @@
 import React, {Component, View, StyleSheet, TouchableHighlight, Text, TextInput, Image, ListView, ScrollView} from 'react-native';
-import { Icon, List } from 'react-native-material-design';
+import { Icon, List, COLOR } from 'react-native-material-design'
 import Line from '../components/Line'
-import url from '../http/url';
+import url from '../http/url'
+import storage from '../storage/storage'
+import TextField from 'react-native-md-textinput'
 
 export default class Search extends Component{
     constructor(props){
         super(props);
 		this.state = {
+            theme: COLOR[`googleGreen500`].color,
             dataSource: new ListView.DataSource({
             rowHasChanged: (row1, row2) => row1 !== row2,        
             }),
 		};
+        this.checkTheme();
     }
+
+    checkTheme = () => {
+        storage.queryStorage("THEME").then(
+            (value) => {
+                if(value){
+                    this.setState({
+                        primary: value,
+                        theme: COLOR[`${value}500`].color
+                    });
+                }
+            }
+        ).done();
+    };
     
     static contextTypes = {
         navigator: React.PropTypes.object.isRequired,
@@ -61,14 +78,7 @@ export default class Search extends Component{
         return(
             <View style={{flex: 1}}>
                 <View style={styles.container}>
-                    <View style={styles.row}>
-                        <View style = {{flex: 3}}>
-                            <TextInput onChangeText={(text) => {this.fetchPosts(text);}} style={styles.textInput} />
-                        </View>
-                        <View style = {{flex: 1}}>
-                            <Icon name="search" style = {styles.image} />
-                        </View>
-                    </View>
+                    <TextField dense={true} label={'Search'} highlightColor={this.state.theme} onChangeText={(text) => this.fetchPosts(text)} />
                 </View>
                 <ListView
                 dataSource={this.state.dataSource}
@@ -85,8 +95,8 @@ var styles = StyleSheet.create({
 	container: {
 		flexDirection: 'column',
 		marginTop: 15,
-		marginLeft: 40,
-		marginRight: 40,
+		marginLeft: 20,
+		marginRight: 20,
 	},
 	row: {
 		borderBottomWidth: 3,
