@@ -11,6 +11,7 @@ import storage from '../storage/storage'
 import Dimensions from 'Dimensions'
 import TextField from 'react-native-md-textinput'
 import ActionButton from 'react-native-action-button'
+import Swipeout from 'react-native-swipeout'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -185,16 +186,17 @@ export default class MainPage extends Component {
         fetch(url.submit, obj)
         	.then((response) => response.json())
 		    .then((responseData) => {
-		    	if(responseData.jquery[0][3] === 'refresh'){
-		    		toast.showToast("wrong crednetial", 3000);
-		    	}else if(responseData.jquery[18][3][0] === '.error.RATELIMIT.field-ratelimit'){
-					toast.showToast("rate limit", 3000);
-		    	}else if(responseData.jquery[18][3][0] === '.error.BAD_CAPTCHA.field-captcha'){
-		    		toast.showToast("not enough karma", 3000);
-		    	}else{
-		    		toast.showToast("submit success", 3000);
-		    	}
-		    	this.refs.modal.close();
+		    	toast.showToast(JSON.stringify(responseData), 4000);
+		   //  	if(responseData.jquery[0][3] === 'refresh'){
+		   //  		toast.showToast("wrong crednetial", 3000);
+		   //  	}else if(responseData.jquery[18][3][0] === '.error.RATELIMIT.field-ratelimit'){
+					// toast.showToast("rate limit", 3000);
+		   //  	}else if(responseData.jquery[18][3][0] === '.error.BAD_CAPTCHA.field-captcha'){
+		   //  		toast.showToast("not enough karma", 3000);
+		   //  	}else{
+		   //  		toast.showToast("submit success", 3000);
+		   //  	}
+		   //  	this.refs.modal.close();
 		    }).done();
 	};
 
@@ -224,7 +226,7 @@ export default class MainPage extends Component {
 	        			})()
 		        	}
 		        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({submit: {sr: text}})} highlightColor={this.state.theme} />
-		        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
+		        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} onPress={() => {this.submitPost()}} />
 		        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
 		        </ScrollView>
 		        </Modal>
@@ -248,60 +250,76 @@ export default class MainPage extends Component {
 	}
     
 	renderRow = (row)=> {
+		let swipeBtns = [{
+	      text: 'Delete',
+	      backgroundColor: 'red',
+	      underlayColor: 'rgba(0, 0, 0, 1, 0.6)',
+	      component:'<Icon color={this.state.theme} name={"adb"} />',
+	      onPress: () => { }
+	    }];
+
         const { navigator } = this.context;
 		if(row.data.media){
 			return(
-				<View>
-					<Line></Line>
-					<Card>
-                        <TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
-                        <View>
-                            <Card.Media
-                                image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
-                                overlay
-                            >
-                                <Text style={[styles.imageHeader, COLOR.paperGrey50]}>
-                                    {row.data.media.oembed.title}
-                                </Text>
-                                <Text style={[TYPO.paperSubhead, COLOR.paperGrey50]}>
-                                    submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}
-                                </Text>
-                            </Card.Media>
-                        </View>
-                        </TouchableNativeFeedback>
-						<Card.Body>
-							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
-								<Text style={styles.commentNum}>{row.data.num_comments} comments </Text>
-							</TouchableHighlight>
-						</Card.Body>
-						<Card.Actions position="right">
-							<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
-						</Card.Actions>
-					</Card>
-				</View>				
+				<Swipeout right={swipeBtns}
+        		autoClose='true'
+        		backgroundColor= 'transparent'>
+					<View>
+						<Line></Line>
+						<Card>
+	                        <TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+	                        <View>
+	                            <Card.Media
+	                                image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
+	                                overlay
+	                            >
+	                                <Text style={[styles.imageHeader, COLOR.paperGrey50]}>
+	                                    {row.data.media.oembed.title}
+	                                </Text>
+	                                <Text style={[TYPO.paperSubhead, COLOR.paperGrey50]}>
+	                                    submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}
+	                                </Text>
+	                            </Card.Media>
+	                        </View>
+	                        </TouchableNativeFeedback>
+							<Card.Body>
+								<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
+								<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
+									<Text style={styles.commentNum}>{row.data.num_comments} comments </Text>
+								</TouchableHighlight>
+							</Card.Body>
+							<Card.Actions position="right">
+								<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
+							</Card.Actions>
+						</Card>
+					</View>	
+				</Swipeout>			
 			);
 		}else{
 			return (
-				<View style={{flex: 1}}>
-					<Line></Line>
-					  <View style={styles.container}>
-						<View style={styles.rightContainer}>
-                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
-                          <View>
-						      <Text style={styles.title}>{row.data.title}</Text>
-						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}</Text>
-                          </View>
-                        </TouchableNativeFeedback>
-						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id});}}>
-						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
-						</TouchableHighlight>
-						<Card.Actions position="right">
-							<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
-						</Card.Actions>
-						</View>
-					  </View>
-				</View>
+				<Swipeout right={swipeBtns}
+        		autoClose='true'
+        		backgroundColor= 'transparent'>
+					<View style={{flex: 1}}>
+						<Line></Line>
+						  <View style={styles.container}>
+							<View style={styles.rightContainer}>
+	                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+	                          <View>
+							      <Text style={styles.title}>{row.data.title}</Text>
+							      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}</Text>
+	                          </View>
+	                        </TouchableNativeFeedback>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id});}}>
+							  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
+							</TouchableHighlight>
+							<Card.Actions position="right">
+								<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
+							</Card.Actions>
+							</View>
+						  </View>
+					</View>
+				</Swipeout>
 			);
 		}
 	};

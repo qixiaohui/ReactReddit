@@ -19,6 +19,7 @@
     "react-native-pull-to-refresh": "^1.1.0",
     "react-native-simple-events": "^1.0.1",
     "react-native-simpledialog-android": "^1.0.3",
+    "react-native-swipeout": "^2.0.12",
     "underscore": "^1.8.3"
   }
 }
