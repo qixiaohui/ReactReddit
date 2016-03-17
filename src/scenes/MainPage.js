@@ -11,6 +11,8 @@ import storage from '../storage/storage'
 import Dimensions from 'Dimensions'
 import TextField from 'react-native-md-textinput'
 import ActionButton from 'react-native-action-button'
+import ScrollableTabView from 'react-native-scrollable-tab-view'
+import tinycolor from 'tinycolor2'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -202,16 +204,24 @@ export default class MainPage extends Component {
 		if(this.state.dataSource._dataBlob){
 			return (
 				<View style={{flex: 1}}>
-				<PTRView onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
-					<View style={{flex: 1}}>
+				<ScrollableTabView tabBarBackgroundColor={this.state.theme} tabBarUnderlineColor={tinycolor(this.state.theme).complement().toHexString()} tabBarActiveTextColor={tinycolor(this.state.theme).complement().toHexString()} tabBarInactiveTextColor={"#ffffff"}>
+				<PTRView tabLabel='Hot' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
+					<ScrollView style={{flex: 1}}>
 					  <ListView
 						dataSource={this.state.dataSource}
 						renderRow={this.renderRow.bind(this)}
 						style={styles.listView}
 						onEndReached={this.fetchPosts}
 					  />
-					</View>
+					</ScrollView>
 				</PTRView>
+				<View tabLabel='New'>
+					<Text>New</Text>
+				</View>
+				<View tabLabel='Rising'>
+					<Text>Rising</Text>
+				</View>
+				</ScrollableTabView>
 		        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
 		        <ScrollView >
 		        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({submit: {title: text}})} highlightColor={this.state.theme} />
