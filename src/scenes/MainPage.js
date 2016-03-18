@@ -25,7 +25,7 @@ export default class MainPage extends Component {
         	primary: 'googleGreen',
             uri: url.base+url.hot,
 			list: null,
-			before: null,
+			after: null,
 			endReached: false,
 			refreshing: false,
 			swipeToClose: true,
@@ -34,7 +34,10 @@ export default class MainPage extends Component {
 			modhash: null,
 			genre: 'HOT',
 			loaded: false,
-			submit: {title: null, url: null, sr: null, text: null},
+			title: null,
+			url: null,
+			text: null,
+			sr: null,
 			width: Dimensions.get('window').width/2,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
@@ -67,13 +70,12 @@ export default class MainPage extends Component {
         storage.queryStorage("POSTS_"+this.state.genre).then(
             (value) => {
                 if(value){
-                	console.log("cache***"+this.state.genre);
                     this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value)._dataBlob.s1),
+                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value).data._dataBlob.s1),
+                        after: JSON.parse(value).after,
                         loaded: true,
                     });                    
                 }else{
-                	console.log("fetch***");
                     this.fetchPosts();
                 }
             }
@@ -94,24 +96,25 @@ export default class MainPage extends Component {
     };
 
 	fetchPosts = (resolve) => {
+		var url = this.state.uri;
 		if(this.state.endReached){
 			return;
 		}
 		
-		if(this.state.before){
-			this.state.uri= this.state.uri + "?beforer=" + this.state.before;
+		if(this.state.after){
+			url = this.state.uri + "?after=" + this.state.after;
 		}
-
-		fetch(this.state.uri)
+		console.log(url);
+		fetch(url)
 		  .then((response) => response.json())
 		  .then((responseData) => {
-			if(this.state.before === responseData.data.after){
+			if(this.state.after === responseData.data.after){
 				return;
 			}else if(!responseData.data.after){
 				this.state.endReached = true;
 			}
 			
-			if(this.state.before){
+			if(this.state.after){
 				responseData.data.children =
 					this.state.dataSource._dataBlob.s1.concat(responseData.data.children);
 			}
@@ -119,12 +122,15 @@ export default class MainPage extends Component {
 			if(typeof this.setState === 'function'){
 				this.setState({
 					dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
-					before: responseData.data.after,
+					after: responseData.data.after,
 					refreshing: false,
 					loaded: true,
 				});
 			}
-            storage.setStorage( "POSTS_"+this.state.genre, this.state.dataSource);
+
+			if(Array.isArray(this.state.dataSource._dataBlob.s1) && this.state.dataSource._dataBlob.s1.length<60){
+            	storage.setStorage( "POSTS_"+this.state.genre, {after: this.state.after, data: this.state.dataSource});
+        	}
             //resolve drag promise
             if(typeof resolve === 'function'){
             	resolve();
@@ -138,7 +144,7 @@ export default class MainPage extends Component {
 			this.setState({
 				refreshing: true,
 				endReached: false,
-				before: null,
+				after: null,
 			});
 			return new Promise((resolve) => {
 				this.fetchPosts(resolve);
@@ -177,23 +183,24 @@ export default class MainPage extends Component {
         }; 
 		if(this.state.postType === 'post'){
 			// ** normal json stringify body doesnt work 
-			obj.body = "title="+this.state.submit.title+
-				"&text="+this.state.submit.text+
-				"&sr="+this.state.submit.sr+
+			obj.body = "title="+this.state.title+
+				"&text="+this.state.text+
+				"&sr="+this.state.sr+
 				"&kind=self"+
 				"&uh="+this.state.modhash;	
         }else if(this.state.postType === 'url'){
 			// ** normal json stringify body doesnt work 
-			obj.body = "title="+this.state.submit.title+
-				"&url="+this.state.submit.url+
-				"&sr="+this.state.submit.sr+
+			obj.body = "title="+this.state.title+
+				"&url="+this.state.url+
+				"&sr="+this.state.sr+
 				"&kind=link"+
 				"&uh="+this.state.modhash;
         }	
 
         fetch(url.submit, obj)
-        	.then((response) => response.json())
+        	.then((response) => {console.log(JSON.stringify(response.json())+"****");response.json()})
 		    .then((responseData) => {
+		    	console.log(JSON.stringify(responseData));
 		    	if(responseData.jquery[0][3] === 'refresh'){
 		    		toast.showToast("wrong crednetial", 3000);
 		    	}else if(responseData.jquery[18][3][0] === '.error.RATELIMIT.field-ratelimit'){
@@ -214,21 +221,21 @@ export default class MainPage extends Component {
 					uri: url.base+url.hot,
 					genre: 'HOT',
 					loaded: false,
-					before: null,
+					after: null,
 				});
 			}else if(data.i===1){
 				this.setState({
 					uri: url.base+url.new,
 					genre: 'NEW',
 					loaded: false,
-					before: null,
+					after: null,
 				});
 			}else if(data.i === 2){
 				this.setState({
 					uri: url.base+url.rising,
 					genre: 'RISING',
 					loaded: false,
-					before: null,
+					after: null,
 				});
 			}
 
@@ -303,17 +310,17 @@ export default class MainPage extends Component {
 			</ScrollableTabView>
 	        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
 	        <ScrollView >
-	        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({submit: {title: text}})} highlightColor={this.state.theme} />
+	        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({title: text})} highlightColor={this.state.theme} />
 	        	{(() => {
 	        		if(this.state.postType === 'post'){
-		        			return(<TextField dense={true} label={'text'} multiline={true} onChangeText={(text) => this.setState({submit: {text: text}})} numberOfLines={4} highlightColor={this.state.theme} />);
+		        			return(<TextField dense={true} label={'text'} multiline={true} onChangeText={(text) => this.setState({text: text})} numberOfLines={4} highlightColor={this.state.theme} />);
 		        		}else if(this.state.postType === 'url'){
-		        			return(<TextField dense={true} label={'url'} onChangeText={(text) => this.setState({submit: {url: text}})} highlightColor={this.state.theme} />);
+		        			return(<TextField dense={true} label={'url'} onChangeText={(text) => this.setState({url: text})} highlightColor={this.state.theme} />);
 		        		}
         			})()
 	        	}
-	        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({submit: {sr: text}})} highlightColor={this.state.theme} />
-	        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
+	        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({sr: text})} highlightColor={this.state.theme} />
+	        	<Button text={"Submit"} primary={this.state.primary} onPress={() => {this.submitPost()}} theme="dark" raised={true} />
 	        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
 	        </ScrollView>
 	        </Modal>
