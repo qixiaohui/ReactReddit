@@ -32,6 +32,8 @@ export default class MainPage extends Component {
 			selectedTab: 'link',
 			postType: null,
 			modhash: null,
+			genre: 'HOT',
+			loaded: false,
 			submit: {title: null, url: null, sr: null, text: null},
 			width: Dimensions.get('window').width/2,
 			dataSource: new ListView.DataSource({
@@ -62,13 +64,16 @@ export default class MainPage extends Component {
     };
 
     checkPosts = () => {
-        storage.queryStorage("POSTS").then(
+        storage.queryStorage("POSTS_"+this.state.genre).then(
             (value) => {
                 if(value){
+                	console.log("cache***"+this.state.genre);
                     this.setState({
                         dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value)._dataBlob.s1),
+                        loaded: true,
                     });                    
                 }else{
+                	console.log("fetch***");
                     this.fetchPosts();
                 }
             }
@@ -94,9 +99,9 @@ export default class MainPage extends Component {
 		}
 		
 		if(this.state.before){
-			this.state,uri= this.state.uri + "?beforer=" + this.state.before;
+			this.state.uri= this.state.uri + "?beforer=" + this.state.before;
 		}
-		
+
 		fetch(this.state.uri)
 		  .then((response) => response.json())
 		  .then((responseData) => {
@@ -111,12 +116,15 @@ export default class MainPage extends Component {
 					this.state.dataSource._dataBlob.s1.concat(responseData.data.children);
 			}
 
-			this.setState({
-				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
-				before: responseData.data.after,
-				refreshing: false,
-			});
-            storage.setStorage( "POSTS", this.state.dataSource);
+			if(typeof this.setState === 'function'){
+				this.setState({
+					dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
+					before: responseData.data.after,
+					refreshing: false,
+					loaded: true,
+				});
+			}
+            storage.setStorage( "POSTS_"+this.state.genre, this.state.dataSource);
             //resolve drag promise
             if(typeof resolve === 'function'){
             	resolve();
@@ -131,7 +139,6 @@ export default class MainPage extends Component {
 				refreshing: true,
 				endReached: false,
 				before: null,
-				uri: url.base+url.hot,
 			});
 			return new Promise((resolve) => {
 				this.fetchPosts(resolve);
@@ -200,61 +207,126 @@ export default class MainPage extends Component {
 		    }).done();
 	};
 
-	render() {
-		if(this.state.dataSource._dataBlob){
-			return (
-				<View style={{flex: 1}}>
-				<ScrollableTabView tabBarBackgroundColor={this.state.theme} tabBarUnderlineColor={tinycolor(this.state.theme).complement().toHexString()} tabBarActiveTextColor={tinycolor(this.state.theme).complement().toHexString()} tabBarInactiveTextColor={"#ffffff"}>
-				<PTRView tabLabel='Hot' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
-					<ScrollView style={{flex: 1}}>
-					  <ListView
-						dataSource={this.state.dataSource}
-						renderRow={this.renderRow.bind(this)}
-						style={styles.listView}
-						onEndReached={this.fetchPosts}
-					  />
-					</ScrollView>
-				</PTRView>
-				<View tabLabel='New'>
-					<Text>New</Text>
-				</View>
-				<View tabLabel='Rising'>
-					<Text>Rising</Text>
-				</View>
-				</ScrollableTabView>
-		        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
-		        <ScrollView >
-		        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({submit: {title: text}})} highlightColor={this.state.theme} />
-		        	{(() => {
-		        		if(this.state.postType === 'post'){
-			        			return(<TextField dense={true} label={'text'} multiline={true} onChangeText={(text) => this.setState({submit: {text: text}})} numberOfLines={4} highlightColor={this.state.theme} />);
-			        		}else if(this.state.postType === 'url'){
-			        			return(<TextField dense={true} label={'url'} onChangeText={(text) => this.setState({submit: {url: text}})} highlightColor={this.state.theme} />);
-			        		}
-	        			})()
-		        	}
-		        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({submit: {sr: text}})} highlightColor={this.state.theme} />
-		        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
-		        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
-		        </ScrollView>
-		        </Modal>
-	         	<ActionButton bgColor={'transparent'} buttonColor={this.state.theme} position={'right'}>
-	          		<ActionButton.Item buttonColor={COLOR[`googleGreen500`].color} title="Submit new post" onPress={() => {this.checkAccount('post')}}>
-	            		<Icon name={'share'} style = {styles.actionButtonIcon} />
-	          		</ActionButton.Item>
-            		<ActionButton.Item buttonColor={COLOR[`googleBlue500`].color} title="Submit new url" onPress={() => {this.checkAccount('url')}}>
-	            		<Icon name={'domain'} style = {styles.actionButtonIcon} />
-	          		</ActionButton.Item>
-	        	</ActionButton>
-				</View>
-			);
-		} else {
-			return (
-				<View style={styles.loadingContainer}>
-					<ProgressBarAndroid style={styles.spinner} />
-				</View>
-			);
+	changeTab = (data) => {
+		if(['HOT','NEW','RISING'].indexOf(this.state.genre) != data.i){
+			if(data.i === 0){
+				this.setState({
+					uri: url.base+url.hot,
+					genre: 'HOT',
+					loaded: false,
+					before: null,
+				});
+			}else if(data.i===1){
+				this.setState({
+					uri: url.base+url.new,
+					genre: 'NEW',
+					loaded: false,
+					before: null,
+				});
+			}else if(data.i === 2){
+				this.setState({
+					uri: url.base+url.rising,
+					genre: 'RISING',
+					loaded: false,
+					before: null,
+				});
+			}
+
+			this.checkPosts();
 		}
+	};
+
+	render() {
+		return (
+			<View style={{flex: 1}}>
+			<ScrollableTabView onChangeTab={(i) => {this.changeTab(i);}} tabBarBackgroundColor={this.state.theme} tabBarUnderlineColor={tinycolor(this.state.theme).complement().toHexString()} tabBarActiveTextColor={tinycolor(this.state.theme).complement().toHexString()} tabBarInactiveTextColor={"#ffffff"}>
+			{(() => {
+				if(this.state.genre === 'HOT' && this.state.loaded){
+					return(
+						<PTRView tabLabel='Hot' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
+							<ScrollView style={{flex: 1}}>
+							  <ListView
+								dataSource={this.state.dataSource}
+								renderRow={this.renderRow.bind(this)}
+								style={styles.listView}
+								onEndReached={this.fetchPosts}
+							  />
+							</ScrollView>
+						</PTRView>
+					);
+				}else{
+					return (<View tabLabel='Hot' style={styles.loadingContainer}>
+						<ProgressBarAndroid style={styles.spinner} />
+					</View>);
+				}})()
+			}
+			{(() => {
+				 if(this.state.genre === 'NEW' && this.state.loaded){
+					return(
+						<PTRView tabLabel='New' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
+							<ScrollView style={{flex: 1}}>
+							  <ListView
+								dataSource={this.state.dataSource}
+								renderRow={this.renderRow.bind(this)}
+								style={styles.listView}
+								onEndReached={this.fetchPosts}
+							  />
+							</ScrollView>
+						</PTRView>
+					);
+				}else{
+					return (<View tabLabel='New' style={styles.loadingContainer}>
+						<ProgressBarAndroid style={styles.spinner} />
+					</View>);
+				}})()
+			}
+			{(() => {
+				 if(this.state.genre === 'RISING' && this.state.loaded){
+					return(
+						<PTRView tabLabel='Rising' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
+							<ScrollView style={{flex: 1}}>
+							  <ListView
+								dataSource={this.state.dataSource}
+								renderRow={this.renderRow.bind(this)}
+								style={styles.listView}
+								onEndReached={this.fetchPosts}
+							  />
+							</ScrollView>
+						</PTRView>
+					);
+				}else{
+					return (<View tabLabel='Rising' style={styles.loadingContainer}>
+						<ProgressBarAndroid style={styles.spinner} />
+					</View>);
+				}})()
+			}
+			</ScrollableTabView>
+	        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
+	        <ScrollView >
+	        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({submit: {title: text}})} highlightColor={this.state.theme} />
+	        	{(() => {
+	        		if(this.state.postType === 'post'){
+		        			return(<TextField dense={true} label={'text'} multiline={true} onChangeText={(text) => this.setState({submit: {text: text}})} numberOfLines={4} highlightColor={this.state.theme} />);
+		        		}else if(this.state.postType === 'url'){
+		        			return(<TextField dense={true} label={'url'} onChangeText={(text) => this.setState({submit: {url: text}})} highlightColor={this.state.theme} />);
+		        		}
+        			})()
+	        	}
+	        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({submit: {sr: text}})} highlightColor={this.state.theme} />
+	        	<Button text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
+	        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
+	        </ScrollView>
+	        </Modal>
+         	<ActionButton bgColor={'transparent'} buttonColor={this.state.theme} position={'right'}>
+          		<ActionButton.Item buttonColor={COLOR[`googleGreen500`].color} title="Submit new post" onPress={() => {this.checkAccount('post')}}>
+            		<Icon name={'share'} style = {styles.actionButtonIcon} />
+          		</ActionButton.Item>
+        		<ActionButton.Item buttonColor={COLOR[`googleBlue500`].color} title="Submit new url" onPress={() => {this.checkAccount('url')}}>
+            		<Icon name={'domain'} style = {styles.actionButtonIcon} />
+          		</ActionButton.Item>
+        	</ActionButton>
+			</View>
+		);
 	}
     
 	renderRow = (row)=> {
