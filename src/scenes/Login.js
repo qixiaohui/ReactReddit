@@ -1,4 +1,5 @@
-import React, {Component, StyleSheet, View, Text, WebView} from 'react-native'
+import React, {Component, StyleSheet, View} from 'react-native'
+import OauthWebView from '../components/OauthWebView'
 import url from "../http/url"
 
 export default class Login extends Component{
@@ -16,13 +17,8 @@ export default class Login extends Component{
     render()  {
         return(
         	<View style={{flex: 1}}>
-        		<WebView 
-				automaticallyAdjustContentInsets = {false}   
-				source={{uri: this.state.url}}
-				javaScriptEnabled = {true}
-				domStorageEnabled = {true}
-				decekerationRate = "normal"
-				startInLoadingState={true}
+        		<OauthWebView 
+        			source={this.state.url}
 				/>
         	</View>
         );
