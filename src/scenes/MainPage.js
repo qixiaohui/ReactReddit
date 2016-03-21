@@ -9,10 +9,7 @@ import FloatingActionButton from '../components/FloatingActionButton'
 import toast from '../modules/Toast'
 import storage from '../storage/storage'
 import Dimensions from 'Dimensions'
-import TextField from 'react-native-md-textinput'
 import ActionButton from 'react-native-action-button'
-import ScrollableTabView from 'react-native-scrollable-tab-view'
-import tinycolor from 'tinycolor2'
     
 export default class MainPage extends Component {
     static contextTypes = {
@@ -32,12 +29,7 @@ export default class MainPage extends Component {
 			selectedTab: 'link',
 			postType: null,
 			modhash: null,
-			genre: 'HOT',
-			loaded: false,
-			title: null,
-			url: null,
-			text: null,
-			sr: null,
+			submit: {title: null, url: null, sr: null, text: null},
 			width: Dimensions.get('window').width/2,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
@@ -67,13 +59,11 @@ export default class MainPage extends Component {
     };
 
     checkPosts = () => {
-        storage.queryStorage("POSTS_"+this.state.genre).then(
+        storage.queryStorage("POSTS").then(
             (value) => {
                 if(value){
                     this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value).data._dataBlob.s1),
-                        after: JSON.parse(value).after,
-                        loaded: true,
+                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(value)._dataBlob.s1),
                     });                    
                 }else{
                     this.fetchPosts();
@@ -102,9 +92,9 @@ export default class MainPage extends Component {
 		}
 		
 		if(this.state.after){
-			url = this.state.uri + "?after=" + this.state.after;
+			url= this.state.uri + "?after=" + this.state.after;
 		}
-		console.log(url);
+		
 		fetch(url)
 		  .then((response) => response.json())
 		  .then((responseData) => {
@@ -119,18 +109,12 @@ export default class MainPage extends Component {
 					this.state.dataSource._dataBlob.s1.concat(responseData.data.children);
 			}
 
-			if(typeof this.setState === 'function'){
-				this.setState({
-					dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
-					after: responseData.data.after,
-					refreshing: false,
-					loaded: true,
-				});
-			}
-
-			if(Array.isArray(this.state.dataSource._dataBlob.s1) && this.state.dataSource._dataBlob.s1.length<60){
-            	storage.setStorage( "POSTS_"+this.state.genre, {after: this.state.after, data: this.state.dataSource});
-        	}
+			this.setState({
+				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
+				after: responseData.data.after,
+				refreshing: false,
+			});
+            storage.setStorage( "POSTS", this.state.dataSource);
             //resolve drag promise
             if(typeof resolve === 'function'){
             	resolve();
@@ -145,6 +129,7 @@ export default class MainPage extends Component {
 				refreshing: true,
 				endReached: false,
 				after: null,
+				uri: url.base+url.hot,
 			});
 			return new Promise((resolve) => {
 				this.fetchPosts(resolve);
@@ -156,18 +141,11 @@ export default class MainPage extends Component {
 		}
 	};
 
-	checkAccount = (type) => {
+	checkAccount = () => {
+		const { navigator }  = this.context;	
+
 		if(this.state.modhash){
-			this.refs.modal.open();
-			if(type === 'post'){
-				this.setState({
-					postType: 'post',
-				});
-			}else if(type === 'url'){
-				this.setState({
-					postType: 'url',
-				});
-			}
+			navigator.forward('submit', null, {theme: this.state.theme, primary: this.state.primary});
 		}else{
 			toast.showToast("Please login first", 3000);
 		}
@@ -183,24 +161,23 @@ export default class MainPage extends Component {
         }; 
 		if(this.state.postType === 'post'){
 			// ** normal json stringify body doesnt work 
-			obj.body = "title="+this.state.title+
-				"&text="+this.state.text+
-				"&sr="+this.state.sr+
+			obj.body = "title="+this.state.submit.title+
+				"&text="+this.state.submit.text+
+				"&sr="+this.state.submit.sr+
 				"&kind=self"+
 				"&uh="+this.state.modhash;	
         }else if(this.state.postType === 'url'){
 			// ** normal json stringify body doesnt work 
-			obj.body = "title="+this.state.title+
-				"&url="+this.state.url+
-				"&sr="+this.state.sr+
+			obj.body = "title="+this.state.submit.title+
+				"&url="+this.state.submit.url+
+				"&sr="+this.state.submit.sr+
 				"&kind=link"+
 				"&uh="+this.state.modhash;
         }	
 
         fetch(url.submit, obj)
-        	.then((response) => {console.log(JSON.stringify(response.json())+"****");response.json()})
+        	.then((response) => response.json())
 		    .then((responseData) => {
-		    	console.log(JSON.stringify(responseData));
 		    	if(responseData.jquery[0][3] === 'refresh'){
 		    		toast.showToast("wrong crednetial", 3000);
 		    	}else if(responseData.jquery[18][3][0] === '.error.RATELIMIT.field-ratelimit'){
@@ -214,126 +191,34 @@ export default class MainPage extends Component {
 		    }).done();
 	};
 
-	changeTab = (data) => {
-		if(['HOT','NEW','RISING'].indexOf(this.state.genre) != data.i){
-			if(data.i === 0){
-				this.setState({
-					uri: url.base+url.hot,
-					genre: 'HOT',
-					loaded: false,
-					after: null,
-				});
-			}else if(data.i===1){
-				this.setState({
-					uri: url.base+url.new,
-					genre: 'NEW',
-					loaded: false,
-					after: null,
-				});
-			}else if(data.i === 2){
-				this.setState({
-					uri: url.base+url.rising,
-					genre: 'RISING',
-					loaded: false,
-					after: null,
-				});
-			}
-
-			this.checkPosts();
-		}
-	};
-
 	render() {
-		return (
-			<View style={{flex: 1}}>
-			<ScrollableTabView onChangeTab={(i) => {this.changeTab(i);}} tabBarBackgroundColor={this.state.theme} tabBarUnderlineColor={tinycolor(this.state.theme).complement().toHexString()} tabBarActiveTextColor={tinycolor(this.state.theme).complement().toHexString()} tabBarInactiveTextColor={"#ffffff"}>
-			{(() => {
-				if(this.state.genre === 'HOT' && this.state.loaded){
-					return(
-						<PTRView tabLabel='Hot' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
-							<ScrollView style={{flex: 1}}>
-							  <ListView
-								dataSource={this.state.dataSource}
-								renderRow={this.renderRow.bind(this)}
-								style={styles.listView}
-								onEndReached={this.fetchPosts}
-							  />
-							</ScrollView>
-						</PTRView>
-					);
-				}else{
-					return (<View tabLabel='Hot' style={styles.loadingContainer}>
-						<ProgressBarAndroid style={styles.spinner} />
-					</View>);
-				}})()
-			}
-			{(() => {
-				 if(this.state.genre === 'NEW' && this.state.loaded){
-					return(
-						<PTRView tabLabel='New' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
-							<ScrollView style={{flex: 1}}>
-							  <ListView
-								dataSource={this.state.dataSource}
-								renderRow={this.renderRow.bind(this)}
-								style={styles.listView}
-								onEndReached={this.fetchPosts}
-							  />
-							</ScrollView>
-						</PTRView>
-					);
-				}else{
-					return (<View tabLabel='New' style={styles.loadingContainer}>
-						<ProgressBarAndroid style={styles.spinner} />
-					</View>);
-				}})()
-			}
-			{(() => {
-				 if(this.state.genre === 'RISING' && this.state.loaded){
-					return(
-						<PTRView tabLabel='Rising' onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
-							<ScrollView style={{flex: 1}}>
-							  <ListView
-								dataSource={this.state.dataSource}
-								renderRow={this.renderRow.bind(this)}
-								style={styles.listView}
-								onEndReached={this.fetchPosts}
-							  />
-							</ScrollView>
-						</PTRView>
-					);
-				}else{
-					return (<View tabLabel='Rising' style={styles.loadingContainer}>
-						<ProgressBarAndroid style={styles.spinner} />
-					</View>);
-				}})()
-			}
-			</ScrollableTabView>
-	        <Modal style={styles.modalContainer} ref={"modal"} swipeToClose={this.state.swipeToClose}>
-	        <ScrollView >
-	        	<TextField dense={true} label={'title'} onChangeText={(text) => this.setState({title: text})} highlightColor={this.state.theme} />
-	        	{(() => {
-	        		if(this.state.postType === 'post'){
-		        			return(<TextField dense={true} label={'text'} multiline={true} onChangeText={(text) => this.setState({text: text})} numberOfLines={4} highlightColor={this.state.theme} />);
-		        		}else if(this.state.postType === 'url'){
-		        			return(<TextField dense={true} label={'url'} onChangeText={(text) => this.setState({url: text})} highlightColor={this.state.theme} />);
-		        		}
-        			})()
-	        	}
-	        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({sr: text})} highlightColor={this.state.theme} />
-	        	<Button text={"Submit"} primary={this.state.primary} onPress={() => {this.submitPost()}} theme="dark" raised={true} />
-	        	<Button text={"Cancel"} primary={'paperPink'} onPress={()=>{this.refs.modal.close()}} theme="dark" raised={true} />
-	        </ScrollView>
-	        </Modal>
-         	<ActionButton bgColor={'transparent'} buttonColor={this.state.theme} position={'right'}>
-          		<ActionButton.Item buttonColor={COLOR[`googleGreen500`].color} title="Submit new post" onPress={() => {this.checkAccount('post')}}>
-            		<Icon name={'share'} style = {styles.actionButtonIcon} />
-          		</ActionButton.Item>
-        		<ActionButton.Item buttonColor={COLOR[`googleBlue500`].color} title="Submit new url" onPress={() => {this.checkAccount('url')}}>
-            		<Icon name={'domain'} style = {styles.actionButtonIcon} />
-          		</ActionButton.Item>
-        	</ActionButton>
-			</View>
-		);
+		if(this.state.dataSource._dataBlob){
+			return (
+				<View style={{flex: 1}}>
+				<PTRView onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
+					<View style={{flex: 1}}>
+					  <ListView
+						dataSource={this.state.dataSource}
+						renderRow={this.renderRow.bind(this)}
+						style={styles.listView}
+						onEndReached={this.fetchPosts}
+					  />
+					</View>
+				</PTRView>
+    			<TouchableHighlight style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
+                    <View>
+                        <FloatingActionButton style = {styles.floatingButton} />
+                    </View>
+                </TouchableHighlight>
+				</View>
+			);
+		} else {
+			return (
+				<View style={styles.loadingContainer}>
+					<ProgressBarAndroid style={styles.spinner} />
+				</View>
+			);
+		}
 	}
     
 	renderRow = (row)=> {
@@ -463,9 +348,13 @@ var styles = StyleSheet.create({
   	marginRight: 20,
   	backgroundColor: '#ffffff'
   },
-  actionButtonIcon: {
-    fontSize: 20,
-    height: 22,
-    color: 'white',
+  fabContainer: {
+      position: 'absolute',
+      bottom: 25,
+      right: 25,     
+  },
+  floatingButton: {
+      width: 56,
+      height: 56, 
   },
 });

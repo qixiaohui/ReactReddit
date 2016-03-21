@@ -20,6 +20,9 @@ export default {
 						component: require('./scenes/Comment').default,
 					}
                 }
+            },
+            submit: {
+                component: require('./scenes/Submit').default,
             }
         },
     },
