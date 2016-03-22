@@ -25,12 +25,7 @@ export default class MainPage extends Component {
 			after: null,
 			endReached: false,
 			refreshing: false,
-			swipeToClose: true,
-			selectedTab: 'link',
-			postType: null,
-			modhash: null,
-			submit: {title: null, url: null, sr: null, text: null},
-			width: Dimensions.get('window').width/2,
+			accessToken: null,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
@@ -47,11 +42,11 @@ export default class MainPage extends Component {
     }
 
     checkLogin = () => {
-    	storage.queryStorage("COOKIE").then(
+    	storage.queryStorage("ACCESS_TOKEN").then(
     		(value) => {
     			if(value){
     				this.setState({
-    					modhash: JSON.parse(value).modhash,
+    					accessToken: value,
     				});
     			}
     		}
@@ -144,51 +139,11 @@ export default class MainPage extends Component {
 	checkAccount = () => {
 		const { navigator }  = this.context;	
 
-		if(this.state.modhash){
+		if(this.state.accessToken){
 			navigator.forward('submit', null, {theme: this.state.theme, primary: this.state.primary});
 		}else{
 			toast.showToast("Please login first", 3000);
 		}
-	};
-
-	submitPost = () => {
-        var obj = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-				'Accept': "application/json",
-            }
-        }; 
-		if(this.state.postType === 'post'){
-			// ** normal json stringify body doesnt work 
-			obj.body = "title="+this.state.submit.title+
-				"&text="+this.state.submit.text+
-				"&sr="+this.state.submit.sr+
-				"&kind=self"+
-				"&uh="+this.state.modhash;	
-        }else if(this.state.postType === 'url'){
-			// ** normal json stringify body doesnt work 
-			obj.body = "title="+this.state.submit.title+
-				"&url="+this.state.submit.url+
-				"&sr="+this.state.submit.sr+
-				"&kind=link"+
-				"&uh="+this.state.modhash;
-        }	
-
-        fetch(url.submit, obj)
-        	.then((response) => response.json())
-		    .then((responseData) => {
-		    	if(responseData.jquery[0][3] === 'refresh'){
-		    		toast.showToast("wrong crednetial", 3000);
-		    	}else if(responseData.jquery[18][3][0] === '.error.RATELIMIT.field-ratelimit'){
-					toast.showToast("rate limit", 3000);
-		    	}else if(responseData.jquery[18][3][0] === '.error.BAD_CAPTCHA.field-captcha'){
-		    		toast.showToast("not enough karma", 3000);
-		    	}else{
-		    		toast.showToast("submit success", 3000);
-		    	}
-		    	this.refs.modal.close();
-		    }).done();
 	};
 
 	render() {

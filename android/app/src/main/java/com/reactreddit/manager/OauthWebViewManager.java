@@ -24,11 +24,14 @@ public class OauthWebViewManager extends SimpleViewManager<WebView> {
     @Override
     protected WebView createViewInstance(final ThemedReactContext reactContext) {
         webView = new WebView(reactContext);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
                 if(url.indexOf("reactreddit") > -1) {
-                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("overrideurl", url);
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OverrideUrl", url);
                 }
                 return true;
             }

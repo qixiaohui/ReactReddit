@@ -35,7 +35,7 @@ export default class Settings extends Component {
     };
 
 	checkLogin = () => {
-		storage.queryStorage('COOKIE').then(
+		storage.queryStorage('ACCESS_TOKEN').then(
 			(value) => {
 				if(value){
 					this.setState({
@@ -68,7 +68,7 @@ export default class Settings extends Component {
 
 	logout = () => {
 		var clearCookie = function(){
-			storage.removeStorage('COOKIE');
+			storage.removeStorage('ACCESS_TOKEN');
 		};
 
 		var refreshView = function(){
@@ -90,8 +90,8 @@ export default class Settings extends Component {
 		};
 
 		SimpleAlert.alert(
-		    'Please read me!',
-		    'Want a warning alert?', [
+		    'Are you sure to logout?',
+		    '', [
 		      { type: SimpleAlert.POSITIVE_BUTTON, text: 'Yes', onPress: _onPress},
 		      { type: SimpleAlert.NEGATIVE_BUTTON, text: 'No' },
 		    ]
