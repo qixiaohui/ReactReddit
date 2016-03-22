@@ -69,6 +69,8 @@ export default class Settings extends Component {
 	logout = () => {
 		var clearCookie = function(){
 			storage.removeStorage('ACCESS_TOKEN');
+			storage.removeStorage('ME');
+			Events.trigger('UPDATE_INFO', {name: 'Hello redditor!'});
 		};
 
 		var refreshView = function(){

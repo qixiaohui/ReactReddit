@@ -4,6 +4,7 @@ import Modal from 'react-native-modalbox'
 import PTRView from 'react-native-pull-to-refresh'
 import url from '../http/url'
 import Line from '../components/Line'
+import Time from '../utils/Time'
 import moment from 'moment'
 import FloatingActionButton from '../components/FloatingActionButton'
 import toast from '../modules/Toast'
@@ -26,6 +27,7 @@ export default class MainPage extends Component {
 			endReached: false,
 			refreshing: false,
 			accessToken: null,
+			tokenTimeStamp: null,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
@@ -46,7 +48,8 @@ export default class MainPage extends Component {
     		(value) => {
     			if(value){
     				this.setState({
-    					accessToken: value,
+    					accessToken: JSON.parse(value).token,
+    					tokenTimeStamp: JSON.parse(value).timeStamp,
     				});
     			}
     		}
@@ -140,6 +143,7 @@ export default class MainPage extends Component {
 		const { navigator }  = this.context;	
 
 		if(this.state.accessToken){
+			Time.checkTokenExpire(this.state.tokenTimeStamp, this.state.accessToken);
 			navigator.forward('submit', null, {theme: this.state.theme, primary: this.state.primary});
 		}else{
 			toast.showToast("Please login first", 3000);
@@ -162,7 +166,7 @@ export default class MainPage extends Component {
 				</PTRView>
     			<TouchableHighlight style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
                     <View>
-                        <FloatingActionButton style = {styles.floatingButton} />
+                        <FloatingActionButton style = {styles.floatingButton} theme={this.state.theme} />
                     </View>
                 </TouchableHighlight>
 				</View>

@@ -7,7 +7,7 @@ export default {
     login: "https://ssl.reddit.com/api/login",
     search: "https://api.reddit.com/api/subreddits_by_topic.json?query=",
     submit: "http://www.reddit.com/api/submit",
-    appId: "2iiDRvxtMDXmuQ",
-    appSecret: "LTxttyNf4A3cdMxbVmITI6WhXa0",
-    oauthBase: "https://ssl.reddit.com/api/v1/authorize?state=reactreddit&duration=permanent&response_type=code&scope=identity&client_id=2iiDRvxtMDXmuQ&redirect_uri=http://reactreddit/authorize",
+    appId: "3jW2zskiPBBJCg",
+    oauthBase: "https://www.reddit.com/api/v1/authorize?state=reactreddit&response_type=token&scope=identity&client_id=3jW2zskiPBBJCg&redirect_uri=http://reactreddit/authorize",
+    me: "https://oauth.reddit.com/api/v1/me",
 }

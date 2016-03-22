@@ -49,7 +49,6 @@ public class FloatingActionButtonManager extends SimpleViewManager<FloatingActio
 
     @ReactProp(name="theme")
     public void setTheme(FloatingActionButton view, String theme){
-        Log.i("theme", theme);
         view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(theme)));
         //view.setBackgroundColor(Color.parseColor(theme));
     }

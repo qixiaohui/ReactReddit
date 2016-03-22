@@ -1,8 +1,10 @@
 import React, {Component, StyleSheet, View, DeviceEventEmitter} from 'react-native'
 import Dimensions from 'Dimensions'
+import moment from 'moment'
 import storage from '../storage/storage'
 import OauthWebView from '../components/OauthWebView'
 import url from "../http/url"
+import ajax from '../http/ajax'
 
 export default class Login extends Component{
     static contextTypes = {
@@ -20,8 +22,10 @@ export default class Login extends Component{
     componentWillMount() {
         const { navigator } = this.context;
         DeviceEventEmitter.addListener('OverrideUrl', function(e: Event){
-        	if(e.indexOf("code=") > -1){
-        		storage.setStorage("ACCESS_TOKEN", e.slice(e.lastIndexOf("code=")+1));
+        	if(e.indexOf("access_token=") > -1){
+                var token = {timeStamp: moment().add(60, 'minutes'), token:e.substring(e.indexOf("=")+1, e.indexOf("&"))};
+        		storage.setStorage("ACCESS_TOKEN", token);
+                ajax.getAccountInfo(token.token);
         		navigator.to('settings');
         	}
         }.bind(this));

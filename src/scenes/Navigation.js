@@ -1,6 +1,7 @@
 import React, { Component, PropTypes, View, Text, Image } from 'react-native';
 
 import { Avatar, Drawer, Divider, COLOR, TYPO } from 'react-native-material-design';
+import Events from 'react-native-simple-events';
 import storage from '../storage/storage'
 
 export default class Navigation extends Component {
@@ -21,6 +22,29 @@ export default class Navigation extends Component {
         }
 		
     }
+
+    componentWillUnmount() {
+        Events.rm('UPDATE_INFO', 'INFO_LISTENER');
+    }
+
+    componentDidMount () {
+        storage.queryStorage("ME").then((value) => {
+            if(value){
+                var obj = JSON.parse(value);
+                this.setState({
+                    headline: obj.name
+                })
+            }
+        }).done();
+
+        Events.on('UPDATE_INFO', 'INFO_LISTENER', this.onUpdateName);
+    }
+
+    onUpdateName = (data) => {
+        this.setState({
+            headline: data.name
+        });
+    };
 
     changeScene = (path, name) => {
         const { drawer, navigator } = this.context;
