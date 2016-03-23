@@ -12,13 +12,16 @@ export default class SubReddit extends Component {
     };
 	constructor(props) {
         super(props);
-        console.log("props"+props.name);
         this.state = {
+        	theme: COLOR[`googleGreen500`].color,
+        	primary: 'googleGreen',
             name: props.name,
             uri: url.baseSubreddit+props.name+"/"+url.hot,
 			list: null,
 			before: null,
 			endReached: false,
+			accessToken: null,
+			tokenTimeStamp: null,
 			dataSource: new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
@@ -36,7 +39,10 @@ export default class SubReddit extends Component {
         }else{
             storage.setStorage("CURRENT_SUB",this.state.name);    
             this.checkCache();
-        }        
+        }
+
+		this.checkTheme();
+        this.checkLogin();     
     }
     
     checkCache = () => {
@@ -51,6 +57,32 @@ export default class SubReddit extends Component {
                 }
             }
         ).done();
+    };
+
+    checkLogin = () => {
+    	storage.queryStorage("ACCESS_TOKEN").then(
+    		(value) => {
+    			if(value){
+    				this.setState({
+    					accessToken: JSON.parse(value).token,
+    					tokenTimeStamp: JSON.parse(value).timeStamp,
+    				});
+    			}
+    		}
+		).done();
+    };
+
+    checkTheme = () => {
+        storage.queryStorage("THEME").then(
+        	(value) => {
+        		if(value){
+        			this.setState({
+        				primary: value,
+        				theme: COLOR[`${value}500`].color
+        			});
+        		}
+        	}
+    	).done();
     };
     
 	fetchPosts = () => {
@@ -133,7 +165,7 @@ export default class SubReddit extends Component {
                         </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, primary: this.state.primary, theme: this.state.theme})}}>
 								<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 							</TouchableHighlight>
 						</Card.Body>
@@ -152,7 +184,7 @@ export default class SubReddit extends Component {
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}</Text>
                           </View>
                         </TouchableNativeFeedback>
-						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
+						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, primary: this.state.primary, theme: this.state.theme})}}>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</TouchableHighlight>
 						</View>

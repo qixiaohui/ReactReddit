@@ -34,6 +34,7 @@ export default class MainPage extends Component {
         };
         this.checkTheme();
         this.checkPosts();
+        this.checkLogin();
     }
 
     componentWillMount() {
@@ -144,7 +145,7 @@ export default class MainPage extends Component {
 
 		if(this.state.accessToken){
 			Time.checkTokenExpire(this.state.tokenTimeStamp, this.state.accessToken);
-			navigator.forward('submit', null, {theme: this.state.theme, primary: this.state.primary});
+			navigator.forward('submit', null, {theme: this.state.theme, primary: this.state.primary, token: this.state.accessToken});
 		}else{
 			toast.showToast("Please login first", 3000);
 		}
@@ -204,7 +205,7 @@ export default class MainPage extends Component {
                         </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id})}}>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, primary: this.state.primary, theme: this.state.theme})}}>
 								<Text style={styles.commentNum}>{row.data.num_comments} comments </Text>
 							</TouchableHighlight>
 						</Card.Body>
@@ -226,7 +227,7 @@ export default class MainPage extends Component {
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}</Text>
                           </View>
                         </TouchableNativeFeedback>
-						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id});}}>
+						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, primary: this.state.primary, theme: this.state.theme});}}>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</TouchableHighlight>
 						<Card.Actions position="right">
