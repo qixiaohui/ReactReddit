@@ -18,12 +18,33 @@ export default {
 
 		fetch(url.comment, obj)
 		.then((response) => response.json()).then((responseData) => {
-			if(responseData.error){
-				reject(responseData.error);
-			}else if(responseData){
-				if(responseData.json.errors.length === 0){
+			if(responseData){
+				if(responseData.error){
+					reject(responseData.error);
+				}else if(responseData.json.errors.length === 0){
 					resolve(JSON.stringify(responseData.json.data.things[0]));
-					console.log("resolve");
+				}
+			}else{
+				reject("Something is wrong");
+			}
+		}).done();
+	},
+	getFriends: function(resolve, reject, token, timeStamp){
+		let obj = {
+			method: 'GET',
+			headers: {
+				'Authorization': "bearer "+token,
+			}
+		};
+
+		fetch(url.friends, obj)
+		.then((response) => response.json()).then((responseData) => {
+			if(responseData){
+				if(responseData.error){
+					reject(responseData.error);
+				}else if(responseData.data.children){
+					console.log(JSON.stringify(responseData.data.children));
+					resolve(JSON.stringify(responseData.data.children));
 				}
 			}else{
 				reject("Something is wrong");

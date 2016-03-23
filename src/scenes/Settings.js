@@ -16,7 +16,9 @@ export default class Settings extends Component {
 		super(props);
 		this.state = {
 			configObj: null,
-			theme: 'googleGreen'
+			theme: 'googleGreen',
+			accessToken: null,
+			tokenTimeStamp: null,
 		};
 		this.checkTheme();
 		this.checkLogin();
@@ -42,13 +44,15 @@ export default class Settings extends Component {
 						configObj: {
 							accountSetting: [
 								{path: 'logout', icon: 'lock-open', func: 'logout'},
-								{path: 'friends', icon: 'people'},
+								{path: 'friends', icon: 'people', prop: {token: JSON.parse(value).token, timeStamp: JSON.parse(value).timeStamp}},
 								{path: 'block', icon: 'delete'},
 								{path: 'password', icon: 'lock'}
 							],
 							preference: [
 								{path: 'theme', icon: 'adb'}
-							]
+							],
+							accessToken: JSON.parse(value).token,
+							tokenTimeStamp: JSON.parse(value).timeStamp,
 						}
 					});
 				}else{
@@ -112,7 +116,7 @@ export default class Settings extends Component {
 					{_.map(this.state.configObj.accountSetting, function(setting) {
 						return(
 							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{if(setting.func){this[setting.func]();
-							}else{navigator.forward(setting.path, null, null)}}}>
+							}else{navigator.forward(setting.path, null, setting.prop)}}}>
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>

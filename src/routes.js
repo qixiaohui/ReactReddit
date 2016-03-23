@@ -40,11 +40,11 @@ export default {
              theme: {
                  component: require('./scenes/Themes').default
              },
+             friends: {
+                component: require('./scenes/Friends').default
+            },
             // logout: {
             //     component: require('./scenes/Logout').default
-            // },
-            // friends: {
-            //     component: require('./scenes/Friends').default
             // },
             // password: {
             //     component: require('./scenes/Password').default
