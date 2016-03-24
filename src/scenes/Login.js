@@ -22,12 +22,24 @@ export default class Login extends Component{
     componentWillMount() {
         const { navigator } = this.context;
         DeviceEventEmitter.addListener('OverrideUrl', function(e: Event){
-        	if(e.indexOf("access_token=") > -1){
-                var token = {timeStamp: moment().add(60, 'minutes'), token:e.substring(e.indexOf("=")+1, e.indexOf("&"))};
-        		storage.setStorage("ACCESS_TOKEN", token);
-                ajax.getAccountInfo(token.token);
-        		navigator.to('settings');
-        	}
+        	if(e.indexOf("code=") > -1){
+                var code = e.slice(e.indexOf("code=")+5);
+                let promise = new Promise((resolve) => {
+                    ajax.getAuthorizationToken(resolve, code);
+                });
+                promise.then(function(val){
+                    let value = JSON.parse(val);
+                    let token={timeStamp: moment().add(60, 'minutes'),
+                    token: value.access_token,
+                    refreshToken: value.refresh_token};
+                    storage.setStorage("ACCESS_TOKEN", token);
+                    ajax.getAccountInfo(token.token);
+                    navigator.to('settings');
+
+                }.bind(this));
+        	}else if(e.indexOf("error=") > -1){
+                navigator.to('settings');
+            }
         }.bind(this));
     }
     

@@ -18,6 +18,7 @@ export default class Comment extends Component{
 			sub: props.sub,
 			id: props.id,
 			token: props.token,
+			tokenTimeStamp: props.timeStamp,
 			text: null,
 			primary: props.primary,
 			theme: props.theme,
@@ -78,7 +79,6 @@ export default class Comment extends Component{
 				ajax.postComment(
 				resolve,
 				reject,
-				this.state.token,
 				"t3_"+this.state.id,
 				this.state.text,
 				this.state.comments[0].data.children[0].data.subreddit);

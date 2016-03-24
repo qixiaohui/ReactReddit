@@ -9,6 +9,7 @@
     "react-native": "^0.21.0"
   },
   "devDependencies": {
+    "base-64": "^0.1.0",
     "moment": "^2.11.2",
     "react-native": "^0.20.0",
     "react-native-action-button": "^1.1.3",

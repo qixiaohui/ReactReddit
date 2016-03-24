@@ -165,7 +165,7 @@ export default class SubReddit extends Component {
                         </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, primary: this.state.primary, theme: this.state.theme})}}>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, timeStamp: this.state.tokenTimeStamp, primary: this.state.primary, theme: this.state.theme})}}>
 								<Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 							</TouchableHighlight>
 						</Card.Body>
@@ -184,7 +184,7 @@ export default class SubReddit extends Component {
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}</Text>
                           </View>
                         </TouchableNativeFeedback>
-						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, primary: this.state.primary, theme: this.state.theme})}}>
+						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, timeStamp: this.state.tokenTimeStamp, primary: this.state.primary, theme: this.state.theme})}}>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</TouchableHighlight>
 						</View>

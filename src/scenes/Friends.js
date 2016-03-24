@@ -25,9 +25,7 @@ export default class Friends extends Component{
 	fetchFriends = () => {
 		let promise = new Promise((resolve, reject) => {ajax.getFriends(
 		 resolve,
-		 reject,
-		 this.state.token,
-		 this.state.tokenTimeStamp)});
+		 reject)});
 
 		//** can't use listview because of weird resolve issue
 		Promise.all([promise]).then(function(value){
@@ -105,6 +103,7 @@ var styles = StyleSheet.create({
 	    flex: 4,
 	},
 	icon:{
+		color: '#f7412c',
 	    flex: 1,
 	    alignSelf: 'flex-end',
 	},	
