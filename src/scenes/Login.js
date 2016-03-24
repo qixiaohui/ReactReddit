@@ -1,5 +1,6 @@
 import React, {Component, StyleSheet, View, DeviceEventEmitter} from 'react-native'
 import Dimensions from 'Dimensions'
+import Spinner from 'react-native-loading-spinner-overlay'
 import moment from 'moment'
 import storage from '../storage/storage'
 import OauthWebView from '../components/OauthWebView'
@@ -15,7 +16,8 @@ export default class Login extends Component{
     constructor(props){
         super(props);
         this.state = {
-        	url: url.oauthBase
+        	url: url.oauthBase,
+            visible: true,
         };
     }
 
@@ -41,6 +43,12 @@ export default class Login extends Component{
                 navigator.to('settings');
             }
         }.bind(this));
+
+        DeviceEventEmitter.addListener('LoadingFinish', function(e: Event){
+            this.setState({
+                visible: false,
+            });
+        }.bind(this));
     }
     
     render()  {
@@ -50,6 +58,7 @@ export default class Login extends Component{
         			source={this.state.url}
         			style={{width: this.state.width, height: 400}}
 				/>
+                <Spinner visible={this.state.visible} />
         	</View>
         );
     }

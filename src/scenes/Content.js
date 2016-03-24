@@ -1,4 +1,5 @@
 import React, { Component, StyleSheet, WebView, TouchableHighlight, PropTypes, View, ProgressBarAndroid, Text, Image } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay'
 
 export default class Content extends Component{
     constructor(props){
@@ -11,14 +12,26 @@ export default class Content extends Component{
             loading: true,
             scalesPageToFit: true,
             webView: null,
+            visible: true,
         };
-		console.log(this.state.url);
     }
     
     setWebView = (webView) => {
       this.setState({
           webView
       });  
+    };
+
+    onNavigationStateChange = (event) => {
+        if(event.loading) {
+          this.setState({
+            visible: true,
+          });
+        } else {
+          this.setState({
+            visible: false,
+          });
+        }
     };
     
     render(){
@@ -30,8 +43,11 @@ export default class Content extends Component{
 				javaScriptEnabled = {true}
 				domStorageEnabled = {true}
 				decekerationRate = "normal"
+                onNavigationStateChange={this.onNavigationStateChange}
 				startInLoadingState={true}
+
 				/>
+                <Spinner visible={this.state.visible} />
 			</View>
 		);
     }
@@ -40,6 +56,5 @@ export default class Content extends Component{
 var styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
     },
 });

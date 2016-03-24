@@ -35,6 +35,12 @@ public class OauthWebViewManager extends SimpleViewManager<WebView> {
                 }
                 return true;
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("LoadingFinish", null);
+            }
         });
         return webView;
     }
