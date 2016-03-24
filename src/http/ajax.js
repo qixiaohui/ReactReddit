@@ -69,7 +69,7 @@ export default {
 			}else{
 				reject("Sorry something is wrong");
 			}
-		});
+		}.bind(this));
 		let getComment = function(){
 			let obj = {
 				method: 'POST',
@@ -130,7 +130,7 @@ export default {
 			}else{
 				reject("Sorry something is wrong");
 			}
-		});
+		}.bind(this));
 
 		let getFriends = function(){
 			let obj = {
@@ -154,9 +154,6 @@ export default {
 				}
 			}).done();
 		};
-	},
-	getRefreshToken: function(token, timeStamp){
-
 	},
 	getAccountInfo: function(token){
         let obj = {

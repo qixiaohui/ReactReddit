@@ -6,6 +6,7 @@ import Events from 'react-native-simple-events';
 export default class Themes extends Component {
     changeTheme = (color) => {
         Events.trigger('CHANGE_THEME', {theme: color});
+        Events.trigger('CHANGE_COLOR', {color: COLOR[`${color}500`].color});
     };
 
     render() {
