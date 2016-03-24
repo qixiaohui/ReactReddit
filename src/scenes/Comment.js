@@ -24,6 +24,8 @@ export default class Comment extends Component{
 			theme: props.theme,
 			comments: null,
 			commentArr: [],
+			thingId: null,
+			checkLogin: false,
 		};
 		
 		this.fetchComments();
@@ -33,7 +35,6 @@ export default class Comment extends Component{
 		fetch(url.baseSubreddit+this.state.sub+"/"+this.state.id+".json")
 		  .then((response) => response.json())
 		  .then((responseData) => {
-		  	console.log(this.state.id);
 				this.setState({
 					comments: responseData
 				});
@@ -49,7 +50,8 @@ export default class Comment extends Component{
 				body: comment.data.body,
 				created: comment.data.created,
 				score: comment.data.score,
-				indent: indent
+				indent: indent,
+				thingId: comment.data.name,
 			});
 
 			if(comment.data.replies){
@@ -63,45 +65,61 @@ export default class Comment extends Component{
 	setNativeProps = (props) => {
 		this.refs["CommentCard"].setNativeProps(props);
 	};
-	
-	reply = () => {
-        storage.queryStorage('COOKIE').then(
-            (value) => {
-                if(value){
-                    toast.showToast("reply", 2000);
-                }else{
-                	toast.showToast("Please login first", 2000);
-                }
-            }
-        ).done();
-	};
 
 	comment = () => {
-		if(this.state.text){
-			let promise = new Promise((resolve, reject) => {
-				ajax.postComment(
-				resolve,
-				reject,
-				"t3_"+this.state.id,
-				this.state.text,
-				this.state.comments[0].data.children[0].data.subreddit);
-			});
-			Promise.all([promise]).then(function(value){
-				let val = JSON.parse(value);
-				this.state.commentArr.push({
-					author: val.data.author,
-					body: val.data.body,
-					created: val.data.created,
-					score: val.data.score,
-					indent: 0
+		if(this.state.checkLogin){
+			if(this.state.text){
+				let promise = new Promise((resolve, reject) => {
+					ajax.postComment(
+					resolve,
+					reject,
+					"t3_"+this.state.id,
+					this.state.text,
+					this.state.comments[0].data.children[0].data.subreddit,
+					this.state.thingId);
 				});
-				this.refs.modal.close();
-				this.forceUpdate();
-			}.bind(this)).catch(function(e){
-				toast.showToast(JSON.stringify(e), 300)
-				this.refs.modal.close();
-			}.bind(this));
+				Promise.all([promise]).then(function(value){
+					let val = JSON.parse(value);
+					if(this.state.thingId){
+						setTimeout(() => {
+							this.fetchComments();
+						}, 100);
+					}else{
+						this.state.commentArr.push({
+							author: val.data.author,
+							body: val.data.body,
+							created: val.data.created,
+							score: val.data.score,
+							indent: 0,
+							thingId: val.data.name,
+						});
+					}
+					this.setState({thingId: null});
+					this.refs.modal.close();
+					this.forceUpdate();
+				}.bind(this)).catch(function(e){
+					this.setState({thingId: null});
+					toast.showToast(JSON.stringify(e), 300)
+					this.refs.modal.close();
+				}.bind(this));
+			}else{
+				toast.showToast("Please fill in comment first", 3000);
+			}
+		}else{
+			toast.showToast("Please login first", 3000);
 		}
+	};
+
+	modalOpen = () => {
+		storage.queryStorage("ACCESS_TOKEN").then((value) => {
+			if(!value){
+				toast.showToast("Please login first", 3000);
+			}else{
+				this.setState({
+					checkLogin: true,
+				});
+			}
+		}).done();
 	};
 	
 	render() {
@@ -126,14 +144,14 @@ export default class Comment extends Component{
 							{_.map(this.state.commentArr, function(comment) {
 								if(comment.score){
 									return (
-							 	<TouchableHighlight onPress={() => {toast.showToast('here', 2000);}}>
+							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.thingId});}}>
 							 		<View>
 							 			<CommentCard ref={"CommentCard"} data={comment} />
 							 		</View>
 								</TouchableHighlight>
 							 );
 								}
-							})}
+							}.bind(this))}
 						</View>
 					</ScrollView>
 					<TouchableNativeFeedback onPress={() => {this.refs.modal.open();}}>
@@ -143,7 +161,7 @@ export default class Comment extends Component{
 					</TouchableNativeFeedback>						
 					<View>
 					</View>
-					<Modal ref={"modal"}> 
+					<Modal ref={"modal"} onOpened={this.modalOpen}> 
 						<TextInput 
 							autoFocus={true}
 							multiline={true}

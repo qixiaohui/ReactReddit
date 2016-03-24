@@ -47,7 +47,7 @@ export default {
             resolve(JSON.stringify(responseData));
 		}).done();
 	},
-	postComment: function(resolve, reject, id, comment, sub){
+	postComment: function(resolve, reject, id, comment, sub, thingId){
 		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
 		let token, refreshToken, timeStamp = null;
 		promise.then(function(val){
@@ -79,10 +79,20 @@ export default {
 				}
 			};
 
-			obj.body = "thing_id="+id+
-				"&text="+comment+
-				"&r="+sub+
-				"&api_type=json";
+			if(thingId){
+				//reply
+				obj.body = "thing_id="+thingId+
+					"&text="+comment+
+					"&r="+sub+
+					"&id=#commentreply_"+thingId+
+					"&api_type=json";
+			}else{
+				//comment
+				obj.body = "thing_id="+id+
+					"&text="+comment+
+					"&r="+sub+
+					"&api_type=json";
+			}
 
 			fetch(url.comment, obj)
 			.then((response) => response.json()).then((responseData) => {
