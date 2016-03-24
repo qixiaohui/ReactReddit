@@ -53,7 +53,7 @@ export default class Friends extends Component{
 			                <TouchableHighlight onPress = {() => {}}>
 			                    <View style={styles.subRow}>
 			                        <Text style={styles.text}>{friend.name}</Text>
-			                        <Icon style={styles.icon} name="remove" />
+			                        <Icon style={styles.icon} name="remove-circle" />
 			                    </View>
 			                </TouchableHighlight>
 			                <Line></Line>

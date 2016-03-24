@@ -62,7 +62,7 @@ export default class Search extends Component{
                 <TouchableHighlight onPress = {() => {this.loadSub(row)}}>
                     <View style={styles.subRow}>
                         <Text style={styles.text}>{row.name}</Text>
-                        <Icon style={styles.icon} name="add-circle" />
+                        <Icon style={[styles.icon, {color: this.state.theme}]} name="add-circle" />
                     </View>
                 </TouchableHighlight>
             </View>
