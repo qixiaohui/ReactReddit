@@ -78,7 +78,7 @@ export default class Search extends Component{
         return(
             <View style={{flex: 1}}>
                 <View style={styles.container}>
-                    <TextField dense={true} label={'Search'} highlightColor={this.state.theme} onChangeText={(text) => this.fetchPosts(text)} />
+                    <TextField autoFocus={true} dense={true} label={'Search'} highlightColor={this.state.theme} onChangeText={(text) => this.fetchPosts(text)} />
                 </View>
                 <ListView
                 dataSource={this.state.dataSource}

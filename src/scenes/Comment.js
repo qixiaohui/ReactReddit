@@ -33,6 +33,7 @@ export default class Comment extends Component{
 		fetch(url.baseSubreddit+this.state.sub+"/"+this.state.id+".json")
 		  .then((response) => response.json())
 		  .then((responseData) => {
+		  	console.log(this.state.id);
 				this.setState({
 					comments: responseData
 				});
@@ -52,8 +53,10 @@ export default class Comment extends Component{
 			});
 
 			if(comment.data.replies){
-				this.renderComments(comment.data.replies.data.children, indent++);
+				let value = indent+1;
+				this.renderComments(comment.data.replies.data.children, value);
 			}
+			return;
 		}.bind(this));
 	};
 
