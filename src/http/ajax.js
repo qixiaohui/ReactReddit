@@ -47,6 +47,23 @@ export default {
             resolve(JSON.stringify(responseData));
 		}).done();
 	},
+	checkCaptcha: function(resolve, reject){
+		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
+		let token, refreshToken, timeStamp = null;
+		promise.then(function(val){
+			if(val){
+				token = JSON.parse(val).token;
+				refreshToken = JSON.parse(val).token;
+				timeStamp = JSON.parse(val).timeStamp;
+			}else{
+				reject("Sorry something is wrong");
+			}
+		}.bind(this));	
+		let obj = {
+			method: 'GET',
+			headers:
+		};
+	},
 	postComment: function(resolve, reject, id, comment, sub, thingId){
 		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
 		let token, refreshToken, timeStamp = null;

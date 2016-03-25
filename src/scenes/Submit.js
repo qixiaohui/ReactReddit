@@ -21,7 +21,12 @@ export default class Submit extends Component{
 			url: null,
 			sr: null
 		};
+		this.checkCaptcha();
 	}
+
+	checkCaptcha = () => {
+		
+	};
 
 	submit = (kind) => {
 
