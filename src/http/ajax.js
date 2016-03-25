@@ -44,7 +44,7 @@ export default {
             token: responseData.access_token,
             refreshToken: responseData.refresh_token};
             storage.setStorage("ACCESS_TOKEN", token);
-            resolve(JSON.stringify(responseData));
+            resolve(JSON.stringify(token));
 		}).done();
 	},
 	checkCaptcha: function(resolve, reject){
@@ -262,5 +262,85 @@ export default {
 		  		Events.trigger('UPDATE_INFO', {name: responseData.name});
 		  	}
 		  }).done();
+	},
+	submitPost: function(resolve, reject, kind, data){
+		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
+		let token, refreshToken, timeStamp = null;
+		promise.then(function(val){
+			if(val){
+				token = JSON.parse(val).token;
+				refreshToken = JSON.parse(val).refreshToken;
+				timeStamp = JSON.parse(val).timeStamp;
+				if(moment().isAfter(timeStamp)){
+					let promise1 = new Promise((resolve) => {this.getRefreshToken(resolve, refreshToken)});
+					promise1.then(function(val){
+						token = JSON.parse(val).token;
+						refreshToken = JSON.parse(val).refreshToken;
+						timeStamp = JSON.parse(val).timeStamp;	
+						submitPost();				
+					}.bind(this));
+				}else{
+					submitPost();
+				}
+			}else{
+				reject("Sorry something is wrong");
+			}
+		}.bind(this));	
+
+		let submitPost = function(){
+			let obj = {
+				method: 'POST',
+				headers: {
+					'Authorization': "bearer "+token,
+					'Content-Type': "application/x-www-form-urlencoded"
+				}
+			};
+			if(kind === 'url'){
+				if(data.iden){
+					obj.body = "api_type=json&kind=link&resubmit=true&sr="+
+					data.sr+
+					"&title="+data.title+
+					"&url="+data.url+
+					"&captcha="+data.captchaText+
+					"&iden="+data.iden;
+				}else{
+					obj.body = "api_type=json&kind=link&resubmit=true&sr="+
+					data.sr+
+					"&title="+data.title+
+					"&url="+data.url;
+				}
+			}else if(kind === 'text'){
+				if(data.iden){
+					obj.body = "api_type=json&kind=self&resubmit=true&sr="+
+					data.sr+
+					"&title="+data.title+
+					"&text="+data.text+
+					"&captcha="+data.captchaText+
+					"&iden="+data.iden;
+				}else{
+					obj.body = "api_type=json&kind=text&resubmit=true&sr="+
+					obj.sr+
+					"&title="+obj.title+
+					"&text="+obj.text;
+				}
+			}
+			fetch(url.submit, obj)
+			.then((response) => response.json())
+			.then((responseData) => {
+				if(responseData){
+					if(responseData.error){
+						reject(responseData.error);
+					}else if(responseData.json.errors.length === 0){
+						resolve(responseData.json.data.url);
+					}else if(responseData.json.captcha){
+						reject({captcha: responseData.json.captcha});
+					}else{
+						reject("Sorry something is wrong");
+					}
+				}else{
+					reject("Sorry something is wrong");
+				}
+			}).done();
+		};	
 	}
 }

@@ -15,4 +15,5 @@ export default {
     newCaptcha: "http://www.reddit.com/api/new_captcha",
     comment: "https://oauth.reddit.com/api/comment",
     friends: "https://oauth.reddit.com/api/v1/me/friends.json",
+    submit: "https://oauth.reddit.com/api/submit",
 }   
