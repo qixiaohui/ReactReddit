@@ -1,10 +1,11 @@
-import React, {Component, View, StyleSheet, ScrollView} from 'react-native'
+import React, {Component, View, StyleSheet, ScrollView, Image} from 'react-native'
 import {Button} from 'react-native-material-design'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import TextField from 'react-native-md-textinput'
 import tinycolor from 'tinycolor2'
 import toast from '../modules/Toast'
 import url from '../http/url'
+import ajax from '../http/ajax'
 
 export default class Submit extends Component{
 	constructor(props){
@@ -19,17 +20,41 @@ export default class Submit extends Component{
 			title: null,
 			text: null,
 			url: null,
-			sr: null
+			sr: null,
+			captcha: null,
 		};
 		this.checkCaptcha();
 	}
 
 	checkCaptcha = () => {
-		
+		let promise = new Promise((resolve, reject) => {
+			ajax.checkCaptcha(resolve, reject);
+		});
+		promise.then((val) => {
+			if(val){
+				this.getNewCaptcha();
+			}
+		}).catch(function(e){
+			toast.showToast(JSON.stringify(e), 3000);
+		});
+	};
+
+	getNewCaptcha = () => {
+		let promise = new Promise((resolve, reject) => {
+			ajax.newCaptcha(resolve, reject);
+		});
+		promise.then((val) => {
+			setTimeout(() => {
+				this.setState({
+					captcha: 'http://www.reddit.com/captcha/'+val+'.png',
+				});
+			}, 50);
+		}).catch(function(e){
+			toast.showToast(JSON.stringify(e), 3000);
+		});
 	};
 
 	submit = (kind) => {
-
 		let post = function(post){
 			if(kind === 'post'){
 				let obj = {
@@ -49,27 +74,6 @@ export default class Submit extends Component{
 		};
 	};
 
-	componentDidMount() {
-        let obj = {
-            method: 'GET',
-            headers: {
-				'Authorization': "bearer "+this.state.token,
-            }
-        }; 
-
-		fetch(url.captcha, obj)
-		.then((response) => response.json())
-		.then((responseData) => {
-			if(responseData){
-				fetchCaptcha();
-			}
-		}).done();
-
-		let fetchCaptcha = function(){
-
-		}
-	}
-
 	render(){
 		return(<View style={{flex: 1}}>
 				<ScrollableTabView tabBarBackgroundColor={this.state.theme} tabBarUnderlineColor={this.state.inverse} tabBarActiveTextColor={this.state.inverse} tabBarInactiveTextColor={"#ffffff"}>
@@ -79,10 +83,12 @@ export default class Submit extends Component{
 			        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({sr: text})} highlightColor={this.state.theme} />		
 			        	{(() => {
 			        		if(this.state.captcha){
-			        			<View style={{flex: 1, flexDirection: 'row'}}>
-			        				<img style={{width: 100, flex: 1}} source={this.state.captcha} />
-			        				<TextField dense={true} label={'captcha'} onChangeText={(text) => this.setState({captchText: text})} highlightColor={this.state.theme} />	
-			        			</View>
+			        			return(
+				        			<View style={{flex: 1, flexDirection: 'column'}}>
+				        				<Image style={{height: 50, width: 120, flex: 1}} source={{uri:this.state.captcha}} />
+				        				<TextField dense={true} label={'captcha'} onChangeText={(text) => this.setState({captchText: text})} highlightColor={this.state.theme} />	
+				        			</View>
+			        			);
 			        		}
 		        		})()
 			        	}
@@ -95,10 +101,12 @@ export default class Submit extends Component{
 			        	<TextField dense={true} label={'subreddit'} onChangeText={(text) => this.setState({sr: text})} highlightColor={this.state.theme} />	
   			        	{(() => {
 			        		if(this.state.captcha){
-			        			<View style={{flex: 1, flexDirection: 'row'}}>
-			        				<img style={{width: 100, flex: 1}} source={this.state.captcha} />
-			        				<TextField dense={true} label={'captcha'} onChangeText={(text) => this.setState({captchText: text})} highlightColor={this.state.theme} />	
-			        			</View>
+			        			return(
+				        			<View style={{flex: 1, flexDirection: 'column'}}>
+				        				<Image style={{height: 50, width: 120, flex: 1}} source={{uri:this.state.captcha}} />
+				        				<TextField dense={true} label={'captcha'} onChangeText={(text) => this.setState({captchText: text})} highlightColor={this.state.theme} />	
+				        			</View>
+			        			);
 			        		}
 		        		})()
 			        	}	

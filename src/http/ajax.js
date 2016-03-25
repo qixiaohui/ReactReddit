@@ -53,15 +53,90 @@ export default {
 		promise.then(function(val){
 			if(val){
 				token = JSON.parse(val).token;
-				refreshToken = JSON.parse(val).token;
+				refreshToken = JSON.parse(val).refreshToken;
 				timeStamp = JSON.parse(val).timeStamp;
+				if(moment().isAfter(timeStamp)){
+					let promise1 = new Promise((resolve) => {this.getRefreshToken(resolve, refreshToken)});
+					promise1.then(function(val){
+						token = JSON.parse(val).token;
+						refreshToken = JSON.parse(val).refreshToken;
+						timeStamp = JSON.parse(val).timeStamp;	
+						checkCaptcha();					
+					}.bind(this));
+				}else{
+					checkCaptcha();
+				}
 			}else{
 				reject("Sorry something is wrong");
 			}
 		}.bind(this));	
-		let obj = {
-			method: 'GET',
-			headers:
+		let checkCaptcha = function(){
+			let obj = {
+				method: 'GET',
+				headers: {
+					'Authorization': "bearer "+token,
+					'Content-Type': "application/x-www-form-urlencoded"
+				}
+			};
+			fetch(url.captcha, obj)
+			.then((response) => response.json()).then((responseData) => {
+				if(responseData){
+					if(responseData.error){
+						reject(responseData.error);
+					}else{
+						resolve(responseData);
+					}
+				}else{
+					reject("Something is wrong");
+				}
+			}).done();
+
+		};
+	},
+	newCaptcha: function(resolve, reject){
+		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
+		let token, refreshToken, timeStamp = null;
+		promise.then(function(val){
+			if(val){
+				token = JSON.parse(val).token;
+				refreshToken = JSON.parse(val).refreshToken;
+				timeStamp = JSON.parse(val).timeStamp;
+				if(moment().isAfter(timeStamp)){
+					let promise1 = new Promise((resolve) => {this.getRefreshToken(resolve, refreshToken)});
+					promise1.then(function(val){
+						token = JSON.parse(val).token;
+						refreshToken = JSON.parse(val).refreshToken;
+						timeStamp = JSON.parse(val).timeStamp;	
+						newCaptcha();					
+					}.bind(this));
+				}else{
+					newCaptcha();
+				}
+			}else{
+				reject("Sorry something is wrong");
+			}
+		}.bind(this));
+		let newCaptcha = function() {
+			let obj = {
+				method: 'POST',
+				headers: {
+					'Authorization': "bearer "+token,
+					'Content-Type': "application/x-www-form-urlencoded"
+				}
+			};
+
+			fetch(url.newCaptcha, obj)
+			.then((response) => response.json()).then((responseData) => {
+				if(responseData){
+					if(responseData.error){
+						reject(responseData.error);
+					}else if(responseData.jquery[11][2] === "call"){
+						resolve(responseData.jquery[11][3][0]);
+					}
+				}else{
+					reject("Sorry something is wrong");
+				}
+			}).done();			
 		};
 	},
 	postComment: function(resolve, reject, id, comment, sub, thingId){
@@ -163,7 +238,6 @@ export default {
 					if(responseData.error){
 						reject(responseData.error);
 					}else if(responseData.data.children){
-						console.log(JSON.stringify(responseData.data.children));
 						resolve(JSON.stringify(responseData.data.children));
 					}
 				}else{
