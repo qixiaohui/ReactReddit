@@ -116,7 +116,7 @@ export default class Settings extends Component {
 					{_.map(this.state.configObj.accountSetting, function(setting) {
 						return(
 							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{if(setting.func){this[setting.func]();
-							}else{navigator.forward(setting.path, null, setting.prop)}}}>
+							}else{navigator.forward(setting.path, null, setting.prop)}}} key={setting.path}>
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>
@@ -136,7 +136,7 @@ export default class Settings extends Component {
 					</View>
 					{_.map(this.state.configObj.preference, function(setting) {
 						return(
-							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward(setting.path, null, null)}}>
+							<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward(setting.path, null, null)}} key={setting.path}>
 							<View>
 								<View style={styles.row}>
 									<View style={styles.icon}>

@@ -49,7 +49,7 @@ export default class Friends extends Component{
 				<View style={{flex: 1, paddingTop: 10}}>
 					{_.map(this.state.data, function(friend) {
 						return (
-			            <View style={styles.rowContainer}>
+			            <View style={styles.rowContainer} key={friend.id}>
 			                <TouchableHighlight onPress = {() => {}}>
 			                    <View style={styles.subRow}>
 			                        <Text style={styles.text}>{friend.name}</Text>

@@ -1,4 +1,6 @@
 import React, {Component, ScrollView, StyleSheet, Image, ProgressBarAndroid, View, Text, TextInput, TouchableHighlight, TouchableNativeFeedback} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay'
+import dismissKeyboard from 'dismissKeyboard'
 import {Button} from 'react-native-material-design'
 import TextField from 'react-native-md-textinput'
 import storage from '../storage/storage'
@@ -26,6 +28,7 @@ export default class Comment extends Component{
 			commentArr: [],
 			thingId: null,
 			checkLogin: false,
+			visible: false,
 		};
 		
 		this.fetchComments();
@@ -69,6 +72,10 @@ export default class Comment extends Component{
 	comment = () => {
 		if(this.state.checkLogin){
 			if(this.state.text){
+				dismissKeyboard();
+				this.setState({
+					visible: true,
+				});
 				let promise = new Promise((resolve, reject) => {
 					ajax.postComment(
 					resolve,
@@ -94,11 +101,18 @@ export default class Comment extends Component{
 							thingId: val.data.name,
 						});
 					}
-					this.setState({thingId: null});
+					this.setTimeout(() => {
+						this.setState({
+							thingId: null,
+							visible: false,
+						});
+					}, 100);
 					this.refs.modal.close();
-					this.forceUpdate();
 				}.bind(this)).catch(function(e){
-					this.setState({thingId: null});
+					this.setState({
+						thingId: null,
+						visible: false,
+					});
 					toast.showToast(JSON.stringify(e), 300)
 					this.refs.modal.close();
 				}.bind(this));
@@ -144,7 +158,7 @@ export default class Comment extends Component{
 							{_.map(this.state.commentArr, function(comment) {
 								if(comment.score){
 									return (
-							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.thingId});}}>
+							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.created});}} key={comment.thingId}>
 							 		<View>
 							 			<CommentCard ref={"CommentCard"} data={comment} />
 							 		</View>
@@ -163,6 +177,7 @@ export default class Comment extends Component{
 					</View>
 					<Modal ref={"modal"} onOpened={this.modalOpen}> 
 						<TextInput 
+							ref={"comment"}
 							autoFocus={true}
 							multiline={true}
 							numberOfLines={5}
@@ -175,6 +190,7 @@ export default class Comment extends Component{
 						/>
 						<Button onPress={() => {this.comment();}} text={"Submit"} primary={this.state.primary} theme="dark" raised={true} />
 					</Modal>
+					<Spinner visible={this.state.visible} />
 				</View>
 			);
 		}else{
