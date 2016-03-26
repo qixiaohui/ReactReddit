@@ -12,6 +12,8 @@ export default {
     refreshToken: "https://www.reddit.com/api/v1/access_token",
     me: "https://oauth.reddit.com/api/v1/me",
     captcha: "https://oauth.reddit.com/api/needs_captcha",
+    newCaptcha: "http://www.reddit.com/api/new_captcha",
     comment: "https://oauth.reddit.com/api/comment",
     friends: "https://oauth.reddit.com/api/v1/me/friends.json",
+    submit: "https://oauth.reddit.com/api/submit",
 }   
