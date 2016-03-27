@@ -39,7 +39,7 @@ export default class Submit extends Component{
 			ajax.checkCaptcha(resolve, reject);
 		});
 		promise.then((val) => {
-			if(val){
+			if(val === 'true'){
 				this.getNewCaptcha();
 			}
 		}).catch(function(e){
