@@ -40,9 +40,11 @@ export default {
 		fetch(url.refreshToken, obj)
 		.then((response) => response.json())
 		.then(function(responseData){
-            let token={timeStamp: moment().add(60, 'minutes'),
-            token: responseData.access_token,
-            refreshToken: responseData.refresh_token};
+            let token={
+	        	timeStamp: moment().add(60, 'minutes'),
+	            token: responseData.access_token,
+	            refreshToken: responseData.refresh_token,
+        	};
             storage.setStorage("ACCESS_TOKEN", token);
             resolve(JSON.stringify(token));
 		}).done();

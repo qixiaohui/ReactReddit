@@ -57,7 +57,7 @@ export default class Toolbar extends Component {
         const { onIconPress } = this.props;
         return (
             <MaterialToolbar
-                title={navigator && navigator.currentRoute ? navigator.currentRoute.title : 'Welcome'}
+                title={navigator && navigator.currentRoute ? navigator.currentRoute.title : 'Popular'}
 				primary={this.state.theme}
                 icon={navigator && navigator.isChild ? 'keyboard-backspace' : 'menu'}
                 onIconPress={() => navigator && navigator.isChild ? navigator.back() : onIconPress()}

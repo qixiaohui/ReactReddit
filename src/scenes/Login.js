@@ -10,7 +10,6 @@ import ajax from '../http/ajax'
 export default class Login extends Component{
     static contextTypes = {
         navigator: React.PropTypes.object.isRequired,
-        width: Dimensions.get('window').width,
     };
 
     constructor(props){
@@ -18,6 +17,7 @@ export default class Login extends Component{
         this.state = {
         	url: url.oauthBase,
             visible: true,
+            width: Dimensions.get('window').width,
         };
     }
 

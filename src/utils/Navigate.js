@@ -202,6 +202,9 @@ export default class Navigate {
 			this.isChild = true;
 			if (child) {
 				const obj = this._getRouteObject(`${current}.${child}`);
+				if(child === 'subReddit'){
+					routes.mainpage.children.subReddit.title = title;
+				}
 				if (!obj) {
 					console.warn(`[Navigate.forward(${child})] Child component ${child} does not exist on ${current}`);
 				} else {
