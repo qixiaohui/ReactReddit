@@ -40,13 +40,11 @@ export default {
 		fetch(url.refreshToken, obj)
 		.then((response) => response.json())
 		.then(function(responseData){
-            let token={
-	        	timeStamp: moment().add(60, 'minutes'),
-	            token: responseData.access_token,
-	            refreshToken: responseData.refresh_token,
-        	};
-            storage.setStorage("ACCESS_TOKEN", token);
+            let token={timeStamp: moment().add(60, 'minutes'),
+            token: responseData.access_token,
+            refreshToken: refreshToken};
             resolve(JSON.stringify(token));
+            storage.setStorage("ACCESS_TOKEN", token);
 		}).done();
 	},
 	checkCaptcha: function(resolve, reject){
@@ -81,12 +79,11 @@ export default {
 				}
 			};
 			fetch(url.captcha, obj)
-			.then((response) => response.json()).then((responseData) => {
+			.then((response) => response._bodyText).then((responseData) => {
 				if(responseData){
 					if(responseData.error){
 						reject(responseData.error);
 					}else{
-						console.log("****"+responseData);
 						resolve(responseData);
 					}
 				}else{
