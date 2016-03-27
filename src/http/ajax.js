@@ -84,6 +84,7 @@ export default {
 					if(responseData.error){
 						reject(responseData.error);
 					}else{
+						console.log("****"+responseData);
 						resolve(responseData);
 					}
 				}else{

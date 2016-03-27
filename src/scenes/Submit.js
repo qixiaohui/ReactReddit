@@ -120,21 +120,8 @@ export default class Submit extends Component{
 
 	clearText = () => {
 		if(this.state.captcha){
-			this.refs.titletext.refs.input.clear();
-			this.refs.texttext.refs.input.clear();
-			this.refs.srtext.refs.input.clear();
 			this.refs.captchatext.refs.input.clear();
-			this.refs.titleurl.refs.input.clear();
-			this.refs.texturl.refs.input.clear();
-			this.refs.srurl.refs.input.clear();
 			this.refs.captchaurl.refs.input.clear();
-		}else{
-			this.refs.titletext.refs.input.clear();
-			this.refs.texttext.refs.input.clear();
-			this.refs.srtext.refs.input.clear();
-			this.refs.titleurl.refs.input.clear();
-			this.refs.texturl.refs.input.clear();
-			this.refs.srurl.refs.input.clear();
 		}
 	};
 
