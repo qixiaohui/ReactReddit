@@ -108,14 +108,12 @@ var styles = StyleSheet.create({
 	    flexDirection: 'row',
 	},
 	text: {
-	    marginLeft: 20,
 	    textAlign: 'left',
 	    fontWeight: 'bold',
 	    color: 'grey',
 	    fontSize: 18,
 	},
 	textSub: {
-		marginLeft: 20,
 		textAlign: 'left',
 		color: '#a8c7f2',
 		fontSize: 12,

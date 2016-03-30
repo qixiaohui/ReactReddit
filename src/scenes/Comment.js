@@ -98,6 +98,7 @@ export default class Comment extends Component{
 					this.refs.modal.close();
 				}, 5000);
 				Promise.all([promise]).then(function(value){
+					console.log("comment val"+val);
 					let val = JSON.parse(value);
 					if(this.state.thingId){
 						setTimeout(() => {

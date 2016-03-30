@@ -197,10 +197,11 @@ export default {
 			fetch(url.comment, obj)
 			.then((response) => response.json()).then((responseData) => {
 				if(responseData){
+					console.log("^&*^*"+JSON.stringify(responseData));
 					if(responseData.error){
 						reject(responseData.error);
 					}else if(responseData.json.errors.length === 0){
-						console.log("&&&"+JSON.stringify(responseData.json.data.things[0]));
+						console.log("resolve comment");
 						resolve(JSON.stringify(responseData.json.data.things[0]));
 					}else{
 						reject(responseData.json.errors[0]);
@@ -338,10 +339,10 @@ export default {
 					"&captcha="+data.captchaText+
 					"&iden="+data.iden;
 				}else{
-					obj.body = "api_type=json&kind=text&resubmit=true&sr="+
-					obj.sr+
-					"&title="+obj.title+
-					"&text="+obj.text;
+					obj.body = "api_type=json&kind=self&resubmit=true&sr="+
+					data.sr+
+					"&title="+data.title+
+					"&text="+data.text;
 				}
 			}
 			fetch(url.submit, obj)
@@ -355,7 +356,7 @@ export default {
 					}else if(responseData.json.captcha){
 						reject({captcha: responseData.json.captcha});
 					}else{
-						resolve(responseData.json.errors[0]);
+						reject(responseData.json.errors[0]);
 					}
 				}else{
 					reject("Sorry something is wrong");
