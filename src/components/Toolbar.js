@@ -61,10 +61,7 @@ export default class Toolbar extends Component {
 				primary={this.state.theme}
                 icon={navigator && navigator.isChild ? 'keyboard-backspace' : 'menu'}
                 onIconPress={() => navigator && navigator.isChild ? navigator.back() : onIconPress()}
-                actions={[{
-                    icon: 'refresh',
-                    badge: { animate: true },
-                }]}
+                actions={[]}
                 rightIconStyle={{
                     margin: 10
                 }}

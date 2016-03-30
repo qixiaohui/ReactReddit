@@ -29,6 +29,7 @@ export default class Friends extends Component{
 
 		//** can't use listview because of weird resolve issue
 		Promise.all([promise]).then(function(value){
+			console.log("&&"+value);
 			let val = JSON.parse(value);
 			this.setState({
 				data: val,
@@ -47,19 +48,27 @@ export default class Friends extends Component{
 		if(!this.state.loading){
 			return (
 				<View style={{flex: 1, paddingTop: 10}}>
-					{_.map(this.state.data, function(friend) {
+					{(() => {if(this.state.data.length > 0){
+						return(
+						_.map(this.state.data, function(friend) {
 						return (
 			            <View style={styles.rowContainer} key={friend.id}>
 			                <TouchableHighlight onPress = {() => {}}>
 			                    <View style={styles.subRow}>
 			                        <Text style={styles.text}>{friend.name}</Text>
-			                        <Icon style={styles.icon} name="remove-circle" />
 			                    </View>
 			                </TouchableHighlight>
 			                <Line></Line>
 			            </View>
 				    	);
-					})}
+					}));} else{
+							return(
+								<View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+									<Text>You don't have any friend right now :-(</Text>
+								</View>
+							);
+						}
+					})()}
 				</View>
 				);
 		}else{
@@ -102,9 +111,4 @@ var styles = StyleSheet.create({
 	    fontSize: 19,
 	    flex: 4,
 	},
-	icon:{
-		color: '#f7412c',
-	    flex: 1,
-	    alignSelf: 'flex-end',
-	},	
 });

@@ -7,6 +7,7 @@ export default {
 	getAuthorizationToken: function(resolve, code){
 		let obj = {
 			method: 'POST',
+			timeout: 10,
 			headers: {
 				'Authorization': "Basic " + base64.encode(url.appId+":"),
 				'Content-Type': "application/x-www-form-urlencoded",
@@ -17,7 +18,7 @@ export default {
 		.then((response) => response.json())
 		.then(function(responseData){
 			resolve(JSON.stringify(responseData));
-		}).done();
+		}).catch((e) => {console.error(e)}).done();
 	},
 	getStorageToken: function(resolve){
 		storage.queryStorage('ACCESS_TOKEN').then((value) => {
@@ -31,6 +32,7 @@ export default {
 	getRefreshToken: function(resolve, refreshToken){
 		let obj = {
 			method: 'POST',
+			timeout: 10,
 			headers: {
 				'Authorization': "Basic " + base64.encode(url.appId+":"),
 				'Content-Type': "application/x-www-form-urlencoded",				
@@ -45,7 +47,7 @@ export default {
             refreshToken: refreshToken};
             resolve(JSON.stringify(token));
             storage.setStorage("ACCESS_TOKEN", token);
-		}).done();
+		}).catch((e) => {console.error(e)}).done();
 	},
 	checkCaptcha: function(resolve, reject){
 		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
@@ -73,6 +75,7 @@ export default {
 		let checkCaptcha = function(){
 			let obj = {
 				method: 'GET',
+				timeout: 10,
 				headers: {
 					'Authorization': "bearer "+token,
 					'Content-Type': "application/x-www-form-urlencoded"
@@ -89,6 +92,8 @@ export default {
 				}else{
 					reject("Something is wrong");
 				}
+			}).catch((e) => {
+				console.error(e);
 			}).done();
 
 		};
@@ -119,6 +124,7 @@ export default {
 		let newCaptcha = function() {
 			let obj = {
 				method: 'POST',
+				timeout: 10,
 				headers: {
 					'Authorization': "bearer "+token,
 					'Content-Type': "application/x-www-form-urlencoded"
@@ -136,6 +142,8 @@ export default {
 				}else{
 					reject("Sorry something is wrong");
 				}
+			}).catch((e) => {
+				console.error(e);
 			}).done();			
 		};
 	},
@@ -165,6 +173,7 @@ export default {
 		let getComment = function(){
 			let obj = {
 				method: 'POST',
+				timeout: 10,
 				headers: {
 					'Authorization': "bearer "+token,
 					'Content-Type': "application/x-www-form-urlencoded"
@@ -185,18 +194,22 @@ export default {
 					"&r="+sub+
 					"&api_type=json";
 			}
-
 			fetch(url.comment, obj)
 			.then((response) => response.json()).then((responseData) => {
 				if(responseData){
 					if(responseData.error){
 						reject(responseData.error);
 					}else if(responseData.json.errors.length === 0){
+						console.log("&&&"+JSON.stringify(responseData.json.data.things[0]));
 						resolve(JSON.stringify(responseData.json.data.things[0]));
+					}else{
+						reject(responseData.json.errors[0]);
 					}
 				}else{
 					reject("Sorry something is wrong");
 				}
+			}).catch((e) => {
+				console.error(e);
 			}).done();
 		};
 	},
@@ -227,6 +240,7 @@ export default {
 		let getFriends = function(){
 			let obj = {
 				method: 'GET',
+				timeout: 10,
 				headers: {
 					'Authorization': "bearer "+token,
 				}
@@ -243,12 +257,15 @@ export default {
 				}else{
 					reject("Something is wrong");
 				}
+			}).catch((e) => {
+				console.error(e);
 			}).done();
 		};
 	},
 	getAccountInfo: function(token){
         let obj = {
             method: 'GET',
+            timeout: 10,
             headers: {
 				'Authorization': "bearer "+token,
             }
@@ -261,6 +278,8 @@ export default {
 		  		storage.setStorage("ME", responseData);
 		  		Events.trigger('UPDATE_INFO', {name: responseData.name});
 		  	}
+		  }).catch((e) => {
+		  	console.error(e);
 		  }).done();
 	},
 	submitPost: function(resolve, reject, kind, data){
@@ -290,6 +309,7 @@ export default {
 		let submitPost = function(){
 			let obj = {
 				method: 'POST',
+				timeout: 10,
 				headers: {
 					'Authorization': "bearer "+token,
 					'Content-Type': "application/x-www-form-urlencoded"
@@ -335,12 +355,14 @@ export default {
 					}else if(responseData.json.captcha){
 						reject({captcha: responseData.json.captcha});
 					}else{
-						reject("Sorry something is wrong");
+						resolve(responseData.json.errors[0]);
 					}
 				}else{
 					reject("Sorry something is wrong");
 				}
+			}).catch((e) => {
+				console.error(e);
 			}).done();
 		};	
-	}
+	},
 }

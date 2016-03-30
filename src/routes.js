@@ -52,6 +52,34 @@ export default {
                 title: 'Friends',
                 component: require('./scenes/Friends').default
             },
+            submitted: {
+                title: 'Submitted',
+                component: require('./scenes/MainPage').default,
+                children: {
+                    content: {
+                        title: 'Content',
+                        component: require('./scenes/Content').default,
+                    },
+                    comments: {
+                        title: 'Comments',
+                        component: require('./scenes/Comment').default,
+                    },  
+                    subReddit: {
+                        title: 'SubReddit',
+                        component: require('./scenes/SubReddit').default,
+                        children: {
+                            content: {
+                                title: 'Content',
+                                component: require('./scenes/Content').default,
+                            },
+                            comments: {
+                                title: 'Comments',
+                                component: require('./scenes/Comment').default,
+                            }
+                        }
+                    },                  
+                }
+            }
             // logout: {
             //     component: require('./scenes/Logout').default
             // },

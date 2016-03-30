@@ -4,6 +4,7 @@ import Line from '../components/Line'
 import storage from '../storage/storage'
 import _ from 'underscore'
 import toast from '../modules/Toast'
+import url from '../http/url'
 import Events from 'react-native-simple-events'
 import SimpleAlert from 'react-native-simpledialog-android'
 
@@ -15,6 +16,7 @@ export default class Settings extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
+			name: props.name,
 			configObj: null,
 			theme: 'googleGreen',
 			accessToken: null,
@@ -39,13 +41,13 @@ export default class Settings extends Component {
 	checkLogin = () => {
 		storage.queryStorage('ACCESS_TOKEN').then(
 			(value) => {
-				if(value){
+				var settingObj = function(){
 					this.setState({
 						configObj: {
 							accountSetting: [
 								{path: 'logout', icon: 'lock-open', func: 'logout'},
 								{path: 'friends', icon: 'people', prop: {token: JSON.parse(value).token, timeStamp: JSON.parse(value).timeStamp}},
-								{path: 'block', icon: 'delete'},
+								{path: 'submitted', icon: 'description', prop: {name: this.state.name}},
 								{path: 'password', icon: 'lock'}
 							],
 							preference: [
@@ -55,6 +57,20 @@ export default class Settings extends Component {
 							tokenTimeStamp: JSON.parse(value).timeStamp,
 						}
 					});
+				}.bind(this);
+				
+				if(value){
+					// need to refetch username
+					if(!this.state.name){
+						storage.queryStorage('ME').then((value) => {
+							this.setState({
+								name: JSON.parse(value).name
+							});
+							settingObj();
+						}).done();
+					}else{
+						settingObj();
+					}
 				}else{
 					this.setState({
 						configObj: {

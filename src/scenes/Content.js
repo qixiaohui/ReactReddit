@@ -14,6 +14,14 @@ export default class Content extends Component{
             webView: null,
             visible: true,
         };
+
+        setTimeout(() => {
+            if(this.state.visible){
+                this.setState({
+                    visible: false,
+                });
+            }
+        }, 7000);
     }
     
     setWebView = (webView) => {

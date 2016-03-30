@@ -52,6 +52,7 @@ export default class Navigate {
 		this.currentRoute = null;
 		this.previousRoute = null;
 		this.isChild = false;
+		this.previousProps = null;
 		BackAndroid.addEventListener('hardwareBackPress', this._hardwareBackPress);
 	}
 
@@ -135,6 +136,9 @@ export default class Navigate {
 	* @param props
 	*/
 	to = (path, title, props) => {
+		if(props){
+			this.previousProps = props;
+		}
 		if (!path) {
 			console.warn(`[Navigate.to(undefined)] A route path is required to navigate to`);
 		} else {
@@ -167,6 +171,9 @@ export default class Navigate {
 		const path = current.substr(0, current.lastIndexOf('.'));
 		const obj = this._getRouteObject(path);
 		const savedInstance = this._recoverInstanceState(path); // TODO
+		if(!props){
+			props = this.previousProps;
+		}
 
 		if (!obj) {
 			console.warn(`[Navigate.back()] No component exists for the parent of ${current}`);
@@ -195,6 +202,9 @@ export default class Navigate {
 	forward = (child, title, props, savedInstanceState) => {
 		const current = this.navigator.getCurrentRoutes()[0].path;
 		const currentObject = this._getRouteObject(current);
+		if(props){
+			this.previousProps = props;
+		}
 
 		if (!currentObject.children || !Object.keys(currentObject.children).length) {
 			console.warn(`[Navigate.forward()] No child components exists for ${current}`);

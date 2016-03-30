@@ -1,6 +1,5 @@
 import React, {Component, ScrollView, StyleSheet, Image, ProgressBarAndroid, View, Text, TextInput, TouchableHighlight, TouchableNativeFeedback} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay'
-import dismissKeyboard from 'dismissKeyboard'
 import {Button} from 'react-native-material-design'
 import TextField from 'react-native-md-textinput'
 import storage from '../storage/storage'
@@ -43,7 +42,9 @@ export default class Comment extends Component{
 				});
 				this.renderComments(this.state.comments[1].data.children, 0);
 				this.forceUpdate();
-		  })
+		  }).catch((e) => {
+		  	console.error(e);
+		  }).done();
 	};
 
 	renderComments = (data, indent) => {
@@ -72,10 +73,13 @@ export default class Comment extends Component{
 	comment = () => {
 		if(this.state.checkLogin){
 			if(this.state.text){
-				dismissKeyboard();
-				this.setState({
-					visible: true,
-				});
+				this.refs.comment.setNativeProps({text: ''});
+				setTimeout(() => {
+					this.setState({
+						text: null,
+						visible: true,
+					});
+				}, 200);
 				let promise = new Promise((resolve, reject) => {
 					ajax.postComment(
 					resolve,
@@ -85,6 +89,14 @@ export default class Comment extends Component{
 					this.state.comments[0].data.children[0].data.subreddit,
 					this.state.thingId);
 				});
+				setTimeout(() => {
+					if(this.state.visible){
+						this.setState({
+							visible: false,
+						});
+					}
+					this.refs.modal.close();
+				}, 5000);
 				Promise.all([promise]).then(function(value){
 					let val = JSON.parse(value);
 					if(this.state.thingId){
@@ -101,20 +113,20 @@ export default class Comment extends Component{
 							thingId: val.data.name,
 						});
 					}
+					this.setState({
+						thingId: null,
+						visible: false,
+					});
 					this.setTimeout(() => {
-						this.setState({
-							thingId: null,
-							visible: false,
-						});
-					}, 100);
-					this.refs.modal.close();
+						this.refs.modal.close();
+					}, 700);
 				}.bind(this)).catch(function(e){
 					this.setState({
 						thingId: null,
 						visible: false,
 					});
-					toast.showToast(JSON.stringify(e), 300)
 					this.refs.modal.close();
+					toast.showToast(JSON.stringify(e), 2000);
 				}.bind(this));
 			}else{
 				toast.showToast("Please fill in comment first", 3000);
@@ -158,7 +170,7 @@ export default class Comment extends Component{
 							{_.map(this.state.commentArr, function(comment) {
 								if(comment.score){
 									return (
-							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.created});}} key={comment.thingId}>
+							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.name});}} key={comment.thingId}>
 							 		<View>
 							 			<CommentCard ref={"CommentCard"} data={comment} />
 							 		</View>
@@ -170,11 +182,9 @@ export default class Comment extends Component{
 					</ScrollView>
 					<TouchableNativeFeedback onPress={() => {this.refs.modal.open();}}>
 						<View style={[styles.button,{backgroundColor: this.state.theme}]}>
-							<Text style={{color: '#ffffff'}}>Submit</Text>
+							<Text style={{color: '#ffffff'}}>Comment</Text>
 						</View>
 					</TouchableNativeFeedback>						
-					<View>
-					</View>
 					<Modal ref={"modal"} onOpened={this.modalOpen}> 
 						<TextInput 
 							ref={"comment"}

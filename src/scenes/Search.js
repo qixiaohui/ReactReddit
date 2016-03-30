@@ -48,8 +48,9 @@ export default class Search extends Component{
 			this.setState({
 				dataSource: this.state.dataSource.cloneWithRows(responseData),
 			});
-		  })
-		  .done();
+		  }).catch((e) => {
+            console.error(e);
+          }).done();
     };
     
     renderRow = (row) => {

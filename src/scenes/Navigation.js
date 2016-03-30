@@ -53,7 +53,11 @@ export default class Navigation extends Component {
             route: path
         });
 
-        navigator.to(path, name);
+        if(path === 'settings'){
+            navigator.to(path, name, {name: this.state.headline});
+        }else{
+            navigator.to(path, name);
+        }
         drawer.closeDrawer();
     };
 
@@ -61,7 +65,7 @@ export default class Navigation extends Component {
         const { route } = this.state;
 
         return (
-            <Drawer theme='light'>
+            <Drawer theme='light' >
                 <Drawer.Header image={<Image source={require('./../img/nav.png')} />}>
                     <View style={styles.header}>
                         <Avatar size={80} image={<Image source={require('../img/avatar.png')}/>} />

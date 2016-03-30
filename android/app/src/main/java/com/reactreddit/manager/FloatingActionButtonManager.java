@@ -44,6 +44,7 @@ public class FloatingActionButtonManager extends SimpleViewManager<FloatingActio
         button.setImageDrawable(ContextCompat.getDrawable(button.getContext(), android.R.drawable.ic_input_add));
         button.setImageTintList(ContextCompat.getColorStateList(button.getContext(), android.R.color.white));
         button.setScaleType(ImageView.ScaleType.CENTER);
+        button.setRippleColor(reactContext.getResources().getColor(android.R.color.white));
         return button;
     }
 

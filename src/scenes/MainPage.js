@@ -18,10 +18,20 @@ export default class MainPage extends Component {
     };
 	constructor(props) {
         super(props);
+        let uri, name = null;
+        if(props.name){
+        	uri = url.user+props.name+"/submitted.json";
+        	name = props.name;
+        }else{
+        	uri = url.base+url.hot;
+        	name = "POSTS";
+    	}
+
         this.state = {
         	theme: COLOR[`googleGreen500`].color,
         	primary: 'googleGreen',
-            uri: url.base+url.hot,
+            uri: uri,
+            name: name,
 			list: null,
 			after: null,
 			endReached: false,
@@ -58,7 +68,8 @@ export default class MainPage extends Component {
     };
 
     checkPosts = () => {
-        storage.queryStorage("POSTS").then(
+
+        storage.queryStorage(this.state.name).then(
             (value) => {
                 if(value){
                     this.setState({
@@ -85,6 +96,7 @@ export default class MainPage extends Component {
     };
 
 	fetchPosts = (resolve) => {
+
 		var url = this.state.uri;
 		if(this.state.endReached){
 			return;
@@ -97,7 +109,7 @@ export default class MainPage extends Component {
 		fetch(url)
 		  .then((response) => response.json())
 		  .then((responseData) => {
-			if(this.state.after === responseData.data.after){
+			if(this.state.after !== null && this.state.after === responseData.data.after){
 				return;
 			}else if(!responseData.data.after){
 				this.state.endReached = true;
@@ -113,13 +125,19 @@ export default class MainPage extends Component {
 				after: responseData.data.after,
 				refreshing: false,
 			});
-            storage.setStorage( "POSTS", this.state.dataSource);
+			if(this.state.dataSource._dataBlob.s1.length > 250){
+				this.setState({
+					endReached: true
+				});
+			}
+            storage.setStorage( this.state.name, this.state.dataSource);
             //resolve drag promise
             if(typeof resolve === 'function'){
             	resolve();
             }
-		  })
-		  .done();
+		  }).catch((e) => {
+		  	console.error(e);
+		  }).done();
 	};
 
 	onRefresh = () => {
@@ -132,6 +150,14 @@ export default class MainPage extends Component {
 			});
 			return new Promise((resolve) => {
 				this.fetchPosts(resolve);
+		        setTimeout(() => {
+		          if(this.state.refreshing){
+		          	this.setState({
+		          		refreshing: false,
+		          	});
+		            resolve();
+		          }
+		        }, 3000);
 			});
 		} else {
 			return new Promise((resolve) => {
@@ -165,11 +191,18 @@ export default class MainPage extends Component {
 					  />
 					</View>
 				</PTRView>
-    			<TouchableHighlight style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
-                    <View>
-                        <FloatingActionButton style = {styles.floatingButton} theme={this.state.theme} />
-                    </View>
-                </TouchableHighlight>
+				{(() => {
+					if(this.state.name === 'POSTS'){
+						return(
+			    			<TouchableHighlight style = {styles.fabContainer} onPress={()=>{this.checkAccount()}}>
+			                    <View>
+			                        <FloatingActionButton style = {styles.floatingButton} theme={this.state.theme} />
+			                    </View>
+			                </TouchableHighlight>
+		                );
+	            	}
+            		})()
+            	}
 				</View>
 			);
 		} else {
@@ -188,7 +221,7 @@ export default class MainPage extends Component {
 				<View>
 					<Line></Line>
 					<Card>
-                        <TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={()=>{navigator.forward('content', null, {url: row.data.url, name: this.state.name});}}>
                         <View>
                             <Card.Media
                                 image={<Image source={{uri:row.data.media.oembed.thumbnail_url}} />}
@@ -205,13 +238,20 @@ export default class MainPage extends Component {
                         </TouchableNativeFeedback>
 						<Card.Body>
 							<Text style={styles.subtitle}>Provided by {row.data.media.oembed.provider_name}</Text>
-							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, timeStamp: this.state.tokenTimeStamp, primary: this.state.primary, theme: this.state.theme})}}>
+							<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, timeStamp: this.state.tokenTimeStamp, primary: this.state.primary, theme: this.state.theme, name: this.state.name})}}>
 								<Text style={styles.commentNum}>{row.data.num_comments} comments </Text>
 							</TouchableHighlight>
 						</Card.Body>
-						<Card.Actions position="right">
-							<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
-						</Card.Actions>
+						{(() => {
+							if(this.state.name === 'POSTS'){
+								return(
+								<Card.Actions position="right">
+									<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
+								</Card.Actions>
+				                );
+			            	}
+		            		})()
+		            	}
 					</Card>
 				</View>				
 			);
@@ -221,18 +261,25 @@ export default class MainPage extends Component {
 					<Line></Line>
 					  <View style={styles.container}>
 						<View style={styles.rightContainer}>
-                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url});}}>
+                        <TouchableNativeFeedback onPress={()=>{navigator.forward('content', null, {url: row.data.url, name: this.state.name});}}>
                           <View>
 						      <Text style={styles.title}>{row.data.title}</Text>
 						      <Text style={styles.subtitle}>submitted by {row.data.author} {moment.unix(row.data.created_utc).fromNow()}r/{row.data.subreddit}</Text>
                           </View>
                         </TouchableNativeFeedback>
-						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, timeStamp: this.state.tokenTimeStamp, primary: this.state.primary, theme: this.state.theme});}}>
+						<TouchableHighlight onPress={()=>{navigator.forward('comments', null, {sub: row.data.subreddit, id: row.data.id, token: this.state.accessToken, timeStamp: this.state.tokenTimeStamp, primary: this.state.primary, theme: this.state.theme, name: this.state.name});}}>
 						  <Text style={styles.commentNum}>{row.data.num_comments} comments</Text>
 						</TouchableHighlight>
-						<Card.Actions position="right">
-							<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
-						</Card.Actions>
+						{(() => {
+							if(this.state.name === 'POSTS'){
+								return(
+								<Card.Actions position="right">
+									<Button text="check this sub" value="Check this sub" onPress={()=>{navigator.forward('subReddit', row.data.subreddit, {name: row.data.subreddit});}} />
+								</Card.Actions>
+				                );
+			            	}
+		            		})()
+		            	}
 						</View>
 					  </View>
 				</View>

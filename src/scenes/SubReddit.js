@@ -1,5 +1,6 @@
 import React, { Component, StyleSheet, ListView, TouchableHighlight, TouchableNativeFeedback, PropTypes, View, Text, ProgressBarAndroid, Image } from 'react-native';
 import { Card, Button, COLOR, TYPO } from 'react-native-material-design';
+import PTRView from 'react-native-pull-to-refresh'
 import url from '../http/url'
 import Line from '../components/Line'
 import moment from 'moment'
@@ -15,15 +16,18 @@ export default class SubReddit extends Component {
         this.state = {
         	theme: COLOR[`googleGreen500`].color,
         	primary: 'googleGreen',
-            name: props.name,
-            uri: url.baseSubreddit+props.name+"/"+url.hot,
-			list: null,
-			before: null,
-			endReached: false,
-			accessToken: null,
-			tokenTimeStamp: null,
-			dataSource: new ListView.DataSource({
-			rowHasChanged: (row1, row2) => row1 !== row2,        
+          name: props.name,
+          subName: props.name,
+          uri: url.baseSubreddit+props.name+"/"+url.hot,
+    			list: null,
+    			after: null,
+    			endReached: false,
+    			accessToken: null,
+    			tokenTimeStamp: null,
+          endReached: false,
+          refreshing: false,
+    			dataSource: new ListView.DataSource({
+    			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
         
@@ -85,52 +89,90 @@ export default class SubReddit extends Component {
     	).done();
     };
     
-	fetchPosts = () => {
+	fetchPosts = (resolve) => {
 		if(this.state.endReached){
 			return;
 		}
 		
-		if(this.state.before){
-			this.state.uri = this.state.uri + "?beforer=" + this.state.before;
+		if(this.state.after){
+			this.state.uri = this.state.uri + "?after=" + this.state.after;
 		}
 		
 		fetch(this.state.uri)
 		  .then((response) => response.json())
 		  .then((responseData) => {
-//			OFFSET+=20;
-//			var data = this.state.dataSource._dataBlob.s1.concat(responseData.businesses);
-//			this.setState({
-//			  dataSource: this.state.dataSource.cloneWithRows(data),
-//			});
-			if(this.state.before === responseData.data.after){
+			if(this.state.after === responseData.data.after){
 				return;
 			}else if(!responseData.data.after){
 				this.state.endReached = true;
 			}
 			
-			if(this.state.before){
+			if(this.state.after){
 				responseData.data.children =
 					this.state.dataSource._dataBlob.s1.concat(responseData.data.children);
 			}
 			this.setState({
 				dataSource: this.state.dataSource.cloneWithRows(responseData.data.children),
-				before: responseData.data.after,
+				after: responseData.data.after,
+        refreshing: false,
 			});
-            storage.setStorage( this.state.name, this.state.dataSource);
-		  })
-		  .done();
+      if(this.state.dataSource._dataBlob.s1.length > 250){
+        this.setState({
+          endReached: true
+        });
+      }
+      storage.setStorage( this.state.name, this.state.dataSource);
+
+      //resolve drag promise
+      if(typeof resolve === 'function'){
+        resolve();
+      }
+		  }).catch((e) => {
+        console.error(e);
+      }).done();
 	};
+
+  onRefresh = () => {
+    if(!this.state.refreshing){
+      this.setState({
+        refreshing: true,
+        endReached: false,
+        after: null,
+        uri: url.baseSubreddit+this.state.subName+"/"+url.hot,
+      });
+      return new Promise((resolve) => {
+        this.fetchPosts(resolve);
+        setTimeout(() => {
+          if(this.state.refreshing){
+            resolve();
+            this.setState({
+              refreshing: false,
+            });
+          }
+        }, 3000);
+      });
+    } else {
+      return new Promise((resolve) => {
+        resolve();
+      });
+    }
+  };
+
 	render() {
 		if(this.state.dataSource._dataBlob){
 			return (
-				<View style={{flex: 1}}>
-				  <ListView
-					dataSource={this.state.dataSource}
-					renderRow={this.renderRow.bind(this)}
-					style={styles.listView}
-					onEndReached={this.fetchPosts}
-				  />
-				</View>
+        <View style={{flex: 1}}>
+          <PTRView onRefresh={this.onRefresh} colors={['#ff0000', '#00ff00', '#0000ff']} progressBackgroundColor={this.state.theme}>
+    				<View style={{flex: 1}}>
+    				  <ListView
+    					dataSource={this.state.dataSource}
+    					renderRow={this.renderRow.bind(this)}
+    					style={styles.listView}
+    					onEndReached={this.fetchPosts}
+    				  />
+    				</View>
+          </PTRView>
+        </View>
 			);
 		} else {
 			return (
