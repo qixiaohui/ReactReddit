@@ -48,7 +48,7 @@ export default class Settings extends Component {
 								{path: 'logout', icon: 'lock-open', func: 'logout'},
 								{path: 'friends', icon: 'people', prop: {token: JSON.parse(value).token, timeStamp: JSON.parse(value).timeStamp}},
 								{path: 'submitted', icon: 'description', prop: {name: this.state.name}},
-								{path: 'password', icon: 'lock'}
+								{path: 'subscribed', icon: 'view-list'}
 							],
 							preference: [
 								{path: 'theme', icon: 'adb'}

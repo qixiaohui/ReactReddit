@@ -1,4 +1,4 @@
-import React, {Component, StyleSheet, View, ProgressBarAndroid, TouchableHighlight, Text, ListView} from 'react-native'
+import React, {Component, StyleSheet, View, ProgressBarAndroid, TouchableHighlight, Text, ScrollView} from 'react-native'
 import { Icon } from 'react-native-material-design'
 import _ from 'underscore'
 import ajax from '../http/ajax'
@@ -29,7 +29,7 @@ export default class Friends extends Component{
 
 		//** can't use listview because of weird resolve issue
 		Promise.all([promise]).then(function(value){
-			console.log("&&"+value);
+
 			let val = JSON.parse(value);
 			this.setState({
 				data: val,
@@ -47,7 +47,7 @@ export default class Friends extends Component{
 	render() {
 		if(!this.state.loading){
 			return (
-				<View style={{flex: 1, paddingTop: 10}}>
+				<ScrollView style={{flex: 1, paddingTop: 10}}>
 					{(() => {if(this.state.data.length > 0){
 						return(
 						_.map(this.state.data, function(friend) {
@@ -69,7 +69,7 @@ export default class Friends extends Component{
 							);
 						}
 					})()}
-				</View>
+				</ScrollView>
 				);
 		}else{
 			return (
@@ -91,10 +91,6 @@ var styles = StyleSheet.create({
 		width: 60,
 		height: 60,
 	},  
-	listView: {
-		paddingTop: 5,
-		backgroundColor: '#F5FCFF',
-	},
 	rowContainer: {
 	    paddingLeft: 10,
 	    paddingRight: 10,

@@ -365,4 +365,54 @@ export default {
 			}).done();
 		};	
 	},
+	fetchMySub: function(resolve, reject){
+		let promise = new Promise((resolve) => {this.getStorageToken(resolve)});
+		let token, refreshToken, timeStamp = null;
+		promise.then(function(val){
+			if(val){
+				token = JSON.parse(val).token;
+				refreshToken = JSON.parse(val).refreshToken;
+				timeStamp = JSON.parse(val).timeStamp;
+				if(moment().isAfter(timeStamp)){
+					let promise1 = new Promise((resolve) => {this.getRefreshToken(resolve, refreshToken)});
+					promise1.then(function(val){
+						token = JSON.parse(val).token;
+						refreshToken = JSON.parse(val).refreshToken;
+						timeStamp = JSON.parse(val).timeStamp;	
+						fetchMySub();				
+					}.bind(this));
+				}else{
+					fetchMySub();
+				}
+			}else{
+				reject("Sorry something is wrong");
+			}
+		}.bind(this));	
+
+		let fetchMySub = function(){
+			let obj = {
+				method: 'GET',
+				timeout: 10,
+				headers: {
+					'Authorization': "bearer "+token,
+					'Content-Type': "application/x-www-form-urlencoded"
+				}
+			};
+
+			fetch(url.mySub, obj)
+			.then((response) => response.json()).then((responseData) => {
+				if(responseData){
+					if(responseData.error){
+						reject(responseData.error);
+					}else if(responseData.data.children){
+						resolve(JSON.stringify(responseData.data.children));
+					}
+				}else{
+					reject("Something is wrong");
+				}
+			}).catch((e) => {
+				console.error(e);
+			}).done();			
+		};	
+	}
 }

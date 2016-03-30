@@ -18,4 +18,5 @@ export default {
     unfriend: "https://oauth.reddit.com/api/unfriend",
     submit: "https://oauth.reddit.com/api/submit",
     user: "https://www.reddit.com/user/",
+    mySub: "https://oauth.reddit.com/subreddits/mine.json",
 }   

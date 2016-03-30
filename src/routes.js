@@ -52,6 +52,26 @@ export default {
                 title: 'Friends',
                 component: require('./scenes/Friends').default
             },
+            subscribed: {
+                title: 'Subscribed',
+                component: require('./scenes/MySubs').default,
+                children: {
+                    subReddit: {
+                        title: 'SubReddit',
+                        component: require('./scenes/SubReddit').default,
+                        children: {
+                            content: {
+                                title: 'Content',
+                                component: require('./scenes/Content').default,
+                            },
+                            comments: {
+                                title: 'Comments',
+                                component: require('./scenes/Comment').default,
+                            }
+                        }
+                    },                   
+                }
+            },
             submitted: {
                 title: 'Submitted',
                 component: require('./scenes/MainPage').default,
@@ -77,7 +97,7 @@ export default {
                                 component: require('./scenes/Comment').default,
                             }
                         }
-                    },                  
+                    }                
                 }
             }
             // logout: {
