@@ -197,7 +197,7 @@ export default {
 			fetch(url.comment, obj)
 			.then((response) => response.json()).then((responseData) => {
 				if(responseData){
-					console.log("^&*^*"+JSON.stringify(responseData));
+
 					if(responseData.error){
 						reject(responseData.error);
 					}else if(responseData.json.errors.length === 0){

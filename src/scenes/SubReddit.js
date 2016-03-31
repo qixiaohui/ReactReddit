@@ -30,23 +30,40 @@ export default class SubReddit extends Component {
     			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
-        
-        // in case there is no prop url when come back from content
-        if(!this.state.name){
-            storage.queryStorage("CURRENT_SUB").then((value) => {
+
+        var getSub = function(){
+          // in case there is no prop url when come back from content
+          if(!this.state.name){
+              storage.queryStorage("CURRENT_SUB").then((value) => {
+                  this.setState({
+                      name: value,
+                      uri: url.baseSubreddit + value + "/" + url.hot,
+                  });
+                  this.checkCache();
+              }).done();
+          }else{
+              storage.setStorage("CURRENT_SUB",this.state.name);    
+              this.checkCache();
+          }
+
+          this.checkTheme();
+          this.checkLogin();   
+        }.bind(this); 
+
+        if(props.name === ""){
+            storage.queryStorage('ME').then((value) => {
+              let name = JSON.parse(value).name;
                 this.setState({
-                    name: value,
-                    uri: url.baseSubreddit + value + "/" + url.hot,
+                  name: name,
+                  subName: name,
+                  uri: url.baseSubreddit+props.name+"/"+url.hot,
                 });
-                this.checkCache();
+                getSub();
             }).done();
         }else{
-            storage.setStorage("CURRENT_SUB",this.state.name);    
-            this.checkCache();
+          getSub();
         }
-
-		this.checkTheme();
-        this.checkLogin();     
+         
     }
     
     checkCache = () => {
@@ -90,18 +107,19 @@ export default class SubReddit extends Component {
     };
     
 	fetchPosts = (resolve) => {
+    var url = this.state.uri;
 		if(this.state.endReached){
 			return;
 		}
 		
 		if(this.state.after){
-			this.state.uri = this.state.uri + "?after=" + this.state.after;
+			url = this.state.uri + "?after=" + this.state.after;
 		}
 		
-		fetch(this.state.uri)
+		fetch(url)
 		  .then((response) => response.json())
 		  .then((responseData) => {
-			if(this.state.after === responseData.data.after){
+			if(this.state.after !== null && this.state.after === responseData.data.after){
 				return;
 			}else if(!responseData.data.after){
 				this.state.endReached = true;
@@ -116,7 +134,7 @@ export default class SubReddit extends Component {
 				after: responseData.data.after,
         refreshing: false,
 			});
-      if(this.state.dataSource._dataBlob.s1.length > 250){
+      if(this.state.dataSource._dataBlob.s1.length > 200){
         this.setState({
           endReached: true
         });

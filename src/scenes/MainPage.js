@@ -19,13 +19,7 @@ export default class MainPage extends Component {
 	constructor(props) {
         super(props);
         let uri, name = null;
-        if(props.name){
-        	uri = url.user+props.name+"/submitted.json";
-        	name = props.name;
-        }else{
-        	uri = url.base+url.hot;
-        	name = "POSTS";
-    	}
+        var getSub = function(){
 
         this.state = {
         	theme: COLOR[`googleGreen500`].color,
@@ -42,9 +36,31 @@ export default class MainPage extends Component {
 			rowHasChanged: (row1, row2) => row1 !== row2,        
 			}),
         };
+
         this.checkTheme();
         this.checkPosts();
         this.checkLogin();
+        }.bind(this);
+
+        if(props.name){
+        	uri = url.user+props.name+"/submitted.json";
+        	name = props.name;
+        	getSub();
+        }else if(props.name === ''){
+            storage.queryStorage('ME').then((value) => {
+            	if(value){
+              		name= JSON.parse(value).name;
+              		uri= url.user+JSON.parse(value).name+"/submitted.json";
+  		            getSub();
+          		}else{
+          			toast.showToast("Something is wrong, please try again later", 3000);
+          		}
+            }).done();
+        }else{
+        	uri = url.base+url.hot;
+        	name = "POSTS";
+        	getSub();
+    	}
     }
 
     componentWillMount() {
@@ -125,7 +141,7 @@ export default class MainPage extends Component {
 				after: responseData.data.after,
 				refreshing: false,
 			});
-			if(this.state.dataSource._dataBlob.s1.length > 250){
+			if(this.state.dataSource._dataBlob.s1.length > 200){
 				this.setState({
 					endReached: true
 				});

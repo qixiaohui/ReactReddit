@@ -80,6 +80,7 @@ export default class Comment extends Component{
 						visible: true,
 					});
 				}, 200);
+
 				let promise = new Promise((resolve, reject) => {
 					ajax.postComment(
 					resolve,
@@ -98,7 +99,6 @@ export default class Comment extends Component{
 					this.refs.modal.close();
 				}, 5000);
 				Promise.all([promise]).then(function(value){
-					console.log("comment val"+val);
 					let val = JSON.parse(value);
 					if(this.state.thingId){
 						setTimeout(() => {
@@ -106,6 +106,7 @@ export default class Comment extends Component{
 						}, 100);
 					}else{
 						this.state.commentArr.push({
+							id: val.data.id,
 							author: val.data.author,
 							body: val.data.body,
 							created: val.data.created,
@@ -171,7 +172,7 @@ export default class Comment extends Component{
 							{_.map(this.state.commentArr, function(comment) {
 								if(comment.score){
 									return (
-							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.name});}} key={comment.thingId}>
+							 	<TouchableHighlight onPress={() => {this.refs.modal.open(); this.setState({thingId: comment.thingId});}} key={comment.id}>
 							 		<View>
 							 			<CommentCard ref={"CommentCard"} data={comment} />
 							 		</View>

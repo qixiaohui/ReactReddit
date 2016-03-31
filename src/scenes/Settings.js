@@ -16,7 +16,7 @@ export default class Settings extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			name: props.name,
+			name: null,
 			configObj: null,
 			theme: 'googleGreen',
 			accessToken: null,
@@ -63,9 +63,16 @@ export default class Settings extends Component {
 					// need to refetch username
 					if(!this.state.name){
 						storage.queryStorage('ME').then((value) => {
-							this.setState({
-								name: JSON.parse(value).name
-							});
+							if(value){
+								this.setState({
+									name: JSON.parse(value).name
+								});
+							}else{
+								//account info is not fetched
+								this.setState({
+									name: ""
+								});
+							}
 							settingObj();
 						}).done();
 					}else{
@@ -90,6 +97,7 @@ export default class Settings extends Component {
 		var clearCookie = function(){
 			storage.removeStorage('ACCESS_TOKEN');
 			storage.removeStorage('ME');
+			storage.removeStorage('MYSUB');
 			Events.trigger('UPDATE_INFO', {name: 'Hello redditor!'});
 		};
 

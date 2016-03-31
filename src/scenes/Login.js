@@ -19,6 +19,14 @@ export default class Login extends Component{
             visible: true,
             width: Dimensions.get('window').width,
         };
+
+        setTimeout(() => {
+            if(this.state.visible){
+                this.setState({
+                    visible: false,
+                });
+            }
+        }, 7000);
     }
 
     componentWillMount() {

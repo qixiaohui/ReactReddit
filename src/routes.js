@@ -35,6 +35,22 @@ export default {
     search: {
         title: 'Search',
         component: require('./scenes/Search').default,
+        children: {
+            subReddit: {
+                title: 'SubReddit',
+                component: require('./scenes/SubReddit').default,
+                children: {
+                    content: {
+                        title: 'Content',
+                        component: require('./scenes/Content').default,
+                    },
+                    comments: {
+                        title: 'Comments',
+                        component: require('./scenes/Comment').default,
+                    }
+                }
+            },            
+        }
     },
     settings: {
         title: 'Settings', 

@@ -63,7 +63,6 @@ export default class Search extends Component{
                 <TouchableHighlight onPress = {() => {this.loadSub(row)}}>
                     <View style={styles.subRow}>
                         <Text style={styles.text}>{row.name}</Text>
-                        <Icon style={[styles.icon, {color: this.state.theme}]} name="add-circle" />
                     </View>
                 </TouchableHighlight>
             </View>
@@ -72,7 +71,7 @@ export default class Search extends Component{
 
     loadSub = (row) => {
         const {navigator} = this.context;
-        navigator.to('mainpage.subReddit', row.name, {name: row.name});
+        navigator.forward('subReddit', row.name, {name: row.name});
     };
     
     render(){

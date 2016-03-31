@@ -4,6 +4,7 @@ import _ from 'underscore'
 import ajax from '../http/ajax'
 import toast from '../modules/Toast'
 import Line from '../components/Line'
+import storage from '../storage/storage'
 
 export default class MySubs extends Component{
     static contextTypes = {
@@ -16,7 +17,18 @@ export default class MySubs extends Component{
 			data: null,
 			loading: true,
     	};
-    	this.fetchSubs();
+    	storage.queryStorage('MYSUB')
+    	.then((value) => {
+    		if(value){
+    			this.setState({
+    				loading: false,
+    				data: JSON.parse(value)
+    			});
+    		}else{
+    			this.fetchSubs();
+    		}
+    	})
+    	.done();
     }
 
     fetchSubs = () => {
@@ -26,11 +38,23 @@ export default class MySubs extends Component{
 
 		//** can't use listview because of weird resolve issue
 		Promise.all([promise]).then(function(value){
-
+			console.log(value);
 			let val = JSON.parse(value);
+			let valSimple = [];
+			_.each(val, function(sub){
+				let obj = {
+					title: sub.data.title,
+					name: sub.data.display_name,
+					id: sub.data.id,
+					uri: sub.data.header_img,
+					description: sub.data.public_description,
+				};
+				valSimple.push(obj);
+			}.bind(this));
 			this.setState({
-				data: val,
+				data: valSimple,
 			});
+			storage.setStorage('MYSUB', valSimple);
 			setTimeout(() => {
 				this.setState({
 					loading: false
@@ -50,18 +74,18 @@ export default class MySubs extends Component{
 						return(
 						_.map(this.state.data, function(sub) {
 						return (
-			            <View style={styles.rowContainer} key={sub.data.id}>
-			                <TouchableHighlight onPress = {() => {navigator.forward('subReddit', sub.data.title, {name: sub.data.display_name});}}>
+			            <View style={styles.rowContainer} key={sub.id}>
+			                <TouchableHighlight onPress = {() => {navigator.forward('subReddit', sub.title, {name: sub.name});}}>
 			                    <View style={styles.subRow}>
 			                    	<View style={{flex: 1}}>
-			                    		<Avatar image={<Image source={{uri: sub.data.header_img}} />} />
+			                    		<Avatar image={<Image source={{uri: sub.uri}} />} />
 			                    	</View>
 			                    	<View style={{flex: 3, flexDirection: 'column'}}>
 			                    		<View style={{flex: 2}}>
-											<Text style={styles.text}>{sub.data.display_name}</Text>
+											<Text style={styles.text}>{sub.name}</Text>
 			                    		</View>
 			                    		<View style={{flex: 3}}>
-											<Text style={styles.textSub}>{sub.data.public_description}</Text>
+											<Text style={styles.textSub}>{sub.description}</Text>
 			                    		</View>
 			                    	</View>
 			                    </View>
