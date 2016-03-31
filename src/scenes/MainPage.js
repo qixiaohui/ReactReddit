@@ -47,6 +47,11 @@ export default class MainPage extends Component {
         	name = props.name;
         	getSub();
         }else if(props.name === ''){
+        	this.state={
+	 			dataSource: new ListView.DataSource({
+				rowHasChanged: (row1, row2) => row1 !== row2,        
+				}),       		
+        	};
             storage.queryStorage('ME').then((value) => {
             	if(value){
               		name= JSON.parse(value).name;
