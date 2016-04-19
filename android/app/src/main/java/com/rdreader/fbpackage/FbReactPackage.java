@@ -1,15 +1,14 @@
-package com.reactreddit.fbpackage;
+package com.rdreader.fbpackage;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.modules.toast.ToastModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.views.image.ReactImageManager;
-import com.reactreddit.manager.FloatingActionButtonManager;
-import com.reactreddit.manager.OauthWebViewManager;
-import com.reactreddit.modules.MyToast;
+import com.rdreader.manager.FloatingActionButtonManager;
+import com.rdreader.manager.OauthWebViewManager;
+import com.rdreader.modules.MyToast;
 
 import java.util.ArrayList;
 import java.util.Arrays;

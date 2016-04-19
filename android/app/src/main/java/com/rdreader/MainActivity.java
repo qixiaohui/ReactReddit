@@ -1,4 +1,4 @@
-package com.reactreddit;
+package com.rdreader;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
-import com.reactreddit.fbpackage.FbReactPackage;
+import com.rdreader.fbpackage.FbReactPackage;
 
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {

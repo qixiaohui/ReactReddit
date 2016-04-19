@@ -38,10 +38,12 @@ export default class Login extends Component{
                     ajax.getAuthorizationToken(resolve, code);
                 });
                 promise.then(function(val){
+                    console.log("&*&*(&("+JSON.stringify(val));
                     let value = JSON.parse(val);
                     let token={timeStamp: moment().add(60, 'minutes'),
                     token: value.access_token,
                     refreshToken: value.refresh_token};
+                    console.log("^&*^*&^*"+JSON.stringify(token));
                     storage.setStorage("ACCESS_TOKEN", token);
                     ajax.getAccountInfo(token.token);
                     navigator.to('settings');

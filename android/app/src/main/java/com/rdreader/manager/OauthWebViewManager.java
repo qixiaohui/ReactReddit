@@ -1,9 +1,8 @@
-package com.reactreddit.manager;
+package com.rdreader.manager;
 
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;

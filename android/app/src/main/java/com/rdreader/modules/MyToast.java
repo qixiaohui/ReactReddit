@@ -1,4 +1,4 @@
-package com.reactreddit.modules;
+package com.rdreader.modules;
 
 import android.widget.Toast;
 
